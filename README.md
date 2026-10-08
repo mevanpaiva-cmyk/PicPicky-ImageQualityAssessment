@@ -170,7 +170,7 @@ Store metadata + scores in MongoDB
 
 ## 👩‍💻 Author
 
-**Mary Evangelin Paiva**
+**Mary Evangelin Paiva**,
 **Bushra Fathima**  
 BCA Final Year — Bengaluru  
 [GitHub](https://github.com/bushrafathima26)
