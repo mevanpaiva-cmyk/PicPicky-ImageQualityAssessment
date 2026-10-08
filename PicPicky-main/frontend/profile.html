@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky | Insights & Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#207fdf",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                },
+                fontFamily: { "display": ["Inter", "sans-serif"] },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+        },
+    }
+</script>
+<style>
+    .glass-card {
+        background: rgba(32, 127, 223, 0.03);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .radar-grid {
+        background-image: radial-gradient(circle, rgba(32, 127, 223, 0.15) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    .heatmap-cell {
+        aspect-ratio: 1/1;
+        border-radius: 2px;
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen sticky top-0 flex flex-col border-r border-white/5 bg-slate-blue-950">
+        <div class="p-6 flex flex-col gap-8">
+            <div class="flex items-center gap-3">
+                <div>
+                    <a href="http://127.0.0.1:5500/frontend/home.html">
+                        <img 
+                        src="PIC-logo.png"
+                        class="h-42 scale-110 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                        alt="PicPicky Logo"
+                        />
+                    </a>
+                </div>
+            </div>
+            <nav class="flex flex-col gap-1.5">
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="dashboard.html">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="upload.html">
+                    <span class="material-symbols-outlined">cloud_upload</span>
+                    <span class="text-sm font-medium">Uploads</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="analysis.html">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="text-sm font-medium">Analysis / Results</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="best-album.html">
+                    <span class="material-symbols-outlined">stars</span>
+                    <span class="text-sm font-medium">Best Album</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg transition-all" href="profile.html">
+                    <span class="material-symbols-outlined fill">person_search</span>
+                    <span class="text-sm font-semibold">Profile / Insights</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Profile Section with Dropdown -->
+        <div class="mt-auto p-6">
+            <div class="relative">
+                <!-- Clickable Profile Area -->
+                <button
+                    id="profileMenuToggle"
+                    type="button"
+                    class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all text-left"
+                >
+                    <div class="w-8 h-8 rounded-full bg-slate-700 border border-white/10 flex items-center justify-center text-white font-bold text-sm" id="avatarInitial"></div>
+                    <div class="flex-1 min-w-0">
+                        <p id="profileName" class="text-xs font-bold text-white truncate"></p>
+                        <p id="profileEmail" class="text-[10px] text-slate-400 truncate"></p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500 text-sm">settings</span>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div
+                    id="profileDropdown"
+                    class="hidden absolute bottom-full left-0 mb-2 w-full rounded-xl border border-white/10 bg-slate-blue-900 shadow-xl overflow-hidden z-50"
+                >
+                    <a
+                        href="profile.html"
+                        class="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-all"
+                    >
+                        <span class="material-symbols-outlined text-base">person</span>
+                        Profile
+                    </a>
+
+                    <button
+                        id="logoutBtn"
+                        type="button"
+                        class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-all text-left"
+                    >
+                        <span class="material-symbols-outlined text-base">logout</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 bg-gradient-to-br from-background-dark via-[#0d121a] to-background-dark overflow-y-auto">
+
+        <!-- Loading State -->
+        <div id="loadingState" class="flex flex-col items-center justify-center py-32 text-slate-400">
+            <span class="material-symbols-outlined text-5xl animate-spin mb-4">refresh</span>
+            <p class="text-sm font-medium">Loading your profile...</p>
+        </div>
+
+        <!-- Profile Content -->
+        <div id="profileContent" class="hidden max-w-6xl mx-auto p-8 space-y-8">
+
+            <!-- Hero: Profile Header -->
+            <section class="glass-card rounded-2xl p-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-6">
+                        <!-- Avatar -->
+                        <div class="w-20 h-20 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center text-4xl font-black text-primary" id="heroAvatar"></div>
+                        <div>
+                            <h2 id="heroName" class="text-3xl font-black tracking-tight text-white"></h2>
+                            <p id="heroEmail" class="text-slate-400 text-sm mt-1"></p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <span id="levelBadge" class="text-xs font-black px-3 py-1 rounded-full border"></span>
+                                <span class="text-slate-500 text-xs">•</span>
+                                <span id="memberSince" class="text-slate-400 text-xs font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Profile Score</p>
+                            <p id="profileScoreHero" class="text-3xl font-black text-primary">--</p>
+                        </div>
+                        <div class="text-right border-l border-white/10 pl-6">
+                            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Total Uploads</p>
+                            <p id="totalUploadsHero" class="text-3xl font-black text-white">--</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Technical Score</p>
+                    <p id="avgTechnical" class="text-4xl font-black text-primary">--</p>
+                    <p class="text-slate-500 text-xs mt-2">Average across all uploads</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Aesthetic Score</p>
+                    <p id="avgAesthetic" class="text-4xl font-black text-amber-400">--</p>
+                    <p class="text-slate-500 text-xs mt-2">CLIP-IQA model rating</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Photographer Level</p>
+                    <p id="levelText" class="text-4xl font-black text-emerald-400">--</p>
+                    <p class="text-slate-500 text-xs mt-2">Based on profile score</p>
+                </div>
+            </div>
+
+            <!-- Quality Breakdown + Style Identity -->
+            <div class="grid grid-cols-12 gap-6">
+
+                <!-- Quality Breakdown -->
+                <div class="col-span-5 glass-card rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-6">Quality Breakdown</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-sm text-slate-300 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+                                    High Quality
+                                </p>
+                                <p id="highQualityCount" class="text-sm font-black text-green-400">0</p>
+                            </div>
+                            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                                <div id="highQualityBar" class="h-full bg-green-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-sm text-slate-300 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+                                    Medium Quality
+                                </p>
+                                <p id="medQualityCount" class="text-sm font-black text-amber-400">0</p>
+                            </div>
+                            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                                <div id="medQualityBar" class="h-full bg-amber-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-sm text-slate-300 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+                                    Low Quality
+                                </p>
+                                <p id="lowQualityCount" class="text-sm font-black text-red-400">0</p>
+                            </div>
+                            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                                <div id="lowQualityBar" class="h-full bg-red-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doughnut Chart -->
+                    <div class="mt-8 flex items-center gap-6">
+                        <div class="relative size-28">
+                            <svg class="size-full -rotate-90" viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" fill="none" r="15.9155" stroke="rgba(255,255,255,0.05)" stroke-width="3"></circle>
+                                <circle id="donutHigh" cx="18" cy="18" fill="none" r="15.9155" stroke="#22c55e" stroke-dasharray="0,100" stroke-width="3" stroke-linecap="round"></circle>
+                                <circle id="donutMed" cx="18" cy="18" fill="none" r="15.9155" stroke="#f59e0b" stroke-dasharray="0,100" stroke-width="3" stroke-linecap="round"></circle>
+                                <circle id="donutLow" cx="18" cy="18" fill="none" r="15.9155" stroke="#ef4444" stroke-dasharray="0,100" stroke-width="3" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="donutTotal" class="text-lg font-black text-white">0</span>
+                                <span class="text-[8px] text-slate-500 font-bold uppercase">Total</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                <span class="text-xs text-slate-400">High Quality</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                                <span class="text-xs text-slate-400">Medium Quality</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                <span class="text-xs text-slate-400">Low Quality</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style Identity -->
+                <div class="col-span-7 glass-card rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-6">Style Identity Analysis</h3>
+                    <div class="grid grid-cols-2 gap-8 items-center">
+                        <div class="aspect-square relative radar-grid rounded-full flex items-center justify-center p-4">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" fill="none" r="20" stroke="white" stroke-opacity="0.05"></circle>
+                                <circle cx="100" cy="100" fill="none" r="40" stroke="white" stroke-opacity="0.05"></circle>
+                                <circle cx="100" cy="100" fill="none" r="60" stroke="white" stroke-opacity="0.05"></circle>
+                                <circle cx="100" cy="100" fill="none" r="80" stroke="white" stroke-opacity="0.05"></circle>
+                                <path id="radarPath" d="M100,100 L100,100 L100,100 L100,100 L100,100 Z" fill="rgba(32, 127, 223, 0.2)" stroke="#207fdf" stroke-width="2"></path>
+                            </svg>
+                            <span class="absolute top-0 text-[9px] font-bold text-slate-500 uppercase">Technical</span>
+                            <span class="absolute bottom-0 text-[9px] font-bold text-slate-500 uppercase">Aesthetic</span>
+                            <span class="absolute left-0 text-[9px] font-bold text-slate-500 uppercase">Quality</span>
+                            <span class="absolute right-0 text-[9px] font-bold text-slate-500 uppercase">Score</span>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-xs font-semibold text-slate-400">Technical Mastery</p>
+                                    <p id="techMasteryVal" class="text-xs font-bold text-white">0%</p>
+                                </div>
+                                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div id="techMasteryBar" class="h-full bg-primary rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(32,127,223,0.5)]" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-xs font-semibold text-slate-400">Aesthetic Appeal</p>
+                                    <p id="aestheticAppealVal" class="text-xs font-bold text-white">0%</p>
+                                </div>
+                                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div id="aestheticAppealBar" class="h-full bg-amber-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-xs font-semibold text-slate-400">Consistency Score</p>
+                                    <p id="consistencyVal" class="text-xs font-bold text-white">0%</p>
+                                </div>
+                                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div id="consistencyBar" class="h-full bg-emerald-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-white/5">
+                                <p class="text-xs font-semibold text-slate-400 mb-1">Photographer Type</p>
+                                <p id="photographerType" class="text-sm font-bold text-white">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strengths & Growth Areas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Core Strengths -->
+                <div class="glass-card rounded-2xl p-6 border-l-4 border-l-emerald-500/50">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="material-symbols-outlined text-emerald-500">verified</span>
+                        <h3 class="font-bold">Core Strengths</h3>
+                    </div>
+                    <ul id="strengthsList" class="space-y-4">
+                        <li class="text-slate-500 text-sm">Loading strengths...</li>
+                    </ul>
+                </div>
+
+                <!-- Growth Areas -->
+                <div class="glass-card rounded-2xl p-6 border-l-4 border-l-amber-500/50">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="material-symbols-outlined text-amber-500">trending_up</span>
+                        <h3 class="font-bold">Growth Areas</h3>
+                    </div>
+                    <ul id="growthList" class="space-y-4">
+                        <li class="text-slate-500 text-sm">Loading growth areas...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- AI Narrative Summary -->
+            <section class="glass-card rounded-2xl p-8 bg-gradient-to-r from-primary/10 via-background-dark/20 to-transparent">
+                <div class="flex items-start gap-6">
+                    <div class="size-12 bg-primary/20 rounded-full flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-primary fill">auto_awesome</span>
+                    </div>
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            AI Style Narrative
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/20">Generated</span>
+                        </h3>
+                        <p id="aiNarrative" class="text-slate-300 leading-relaxed text-sm max-w-4xl">
+                            Loading your personalized AI narrative...
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center py-4">
+                <p class="text-[10px] text-slate-600 font-bold uppercase tracking-[0.2em]">
+                    PicPicky Analysis Engine • Profile updated in real-time
+                </p>
+            </footer>
+
+        </div>
+    </main>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    const token = localStorage.getItem("token");
+
+    if (!userName || !token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("profileName").textContent = userName;
+    document.getElementById("profileEmail").textContent = userEmail;
+    document.getElementById("avatarInitial").textContent = userName.charAt(0).toUpperCase();
+
+    fetchProfile(token);
+});
+
+async function fetchProfile(token) {
+    try {
+        const response = await fetch(`${API_BASE}/profile`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        document.getElementById("loadingState").classList.add("hidden");
+        document.getElementById("profileContent").classList.remove("hidden");
+
+        populateProfile(data);
+
+    } catch (error) {
+        console.error("Profile error:", error);
+        document.getElementById("loadingState").innerHTML = `
+            <span class="material-symbols-outlined text-5xl text-red-400 mb-4">error</span>
+            <p class="text-red-400 text-sm font-medium">Failed to load profile. Is the server running?</p>
+        `;
+    }
+}
+
+function populateProfile(data) {
+    const name = data.name || "Photographer";
+    const email = data.email || "";
+    const totalUploads = data.total_uploads || 0;
+    const profileScore = data.profile_score || 0;
+    const level = data.level || "Beginner";
+    const avgTech = data.avg_technical_score || 0;
+    const avgAesthetic = data.avg_aesthetic_score || 0;
+    const highQuality = data.high_quality_count || 0;
+    const medQuality = data.medium_quality_count || 0;
+    const lowQuality = data.low_quality_count || 0;
+    const memberSince = data.member_since || "Unknown";
+
+    // ✅ Hero Section
+    document.getElementById("heroAvatar").textContent = name.charAt(0).toUpperCase();
+    document.getElementById("heroName").textContent = name;
+    document.getElementById("heroEmail").textContent = email;
+    document.getElementById("profileScoreHero").textContent = profileScore;
+    document.getElementById("totalUploadsHero").textContent = totalUploads;
+    document.getElementById("memberSince").textContent = `Member since ${memberSince}`;
+
+    // ✅ Level Badge
+    const levelBadge = document.getElementById("levelBadge");
+    const levelColors = {
+        "Expert": "bg-purple-500/20 text-purple-400 border-purple-500/30",
+        "Advanced": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+        "Intermediate": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        "Beginner": "bg-slate-500/20 text-slate-400 border-slate-500/30"
+    };
+    levelBadge.textContent = `⭐ ${level}`;
+    levelBadge.className = `text-xs font-black px-3 py-1 rounded-full border ${levelColors[level] || levelColors["Beginner"]}`;
+
+    // ✅ Score Cards
+    document.getElementById("avgTechnical").textContent = avgTech;
+    document.getElementById("avgAesthetic").textContent = avgAesthetic;
+    document.getElementById("levelText").textContent = level;
+
+    // ✅ Quality Breakdown Bars
+    if (totalUploads > 0) {
+        const highPct = Math.round(highQuality / totalUploads * 100);
+        const medPct = Math.round(medQuality / totalUploads * 100);
+        const lowPct = Math.round(lowQuality / totalUploads * 100);
+
+        document.getElementById("highQualityCount").textContent = highQuality;
+        document.getElementById("medQualityCount").textContent = medQuality;
+        document.getElementById("lowQualityCount").textContent = lowQuality;
+
+        setTimeout(() => {
+            document.getElementById("highQualityBar").style.width = `${highPct}%`;
+            document.getElementById("medQualityBar").style.width = `${medPct}%`;
+            document.getElementById("lowQualityBar").style.width = `${lowPct}%`;
+        }, 300);
+
+        // ✅ Donut Chart
+        document.getElementById("donutTotal").textContent = totalUploads;
+        updateDonutChart(highPct, medPct, lowPct);
+    }
+
+    // ✅ Style Identity Bars
+    const consistency = Math.round((avgTech + avgAesthetic) / 2);
+    setTimeout(() => {
+        document.getElementById("techMasteryBar").style.width = `${avgTech}%`;
+        document.getElementById("aestheticAppealBar").style.width = `${avgAesthetic}%`;
+        document.getElementById("consistencyBar").style.width = `${consistency}%`;
+    }, 400);
+
+    document.getElementById("techMasteryVal").textContent = `${avgTech}%`;
+    document.getElementById("aestheticAppealVal").textContent = `${avgAesthetic}%`;
+    document.getElementById("consistencyVal").textContent = `${consistency}%`;
+
+    // ✅ Photographer Type
+    let photographerType = "Developing Photographer";
+    if (profileScore >= 85) photographerType = "Professional Photographer";
+    else if (profileScore >= 70) photographerType = "Advanced Enthusiast";
+    else if (profileScore >= 50) photographerType = "Passionate Hobbyist";
+    document.getElementById("photographerType").textContent = photographerType;
+
+    // ✅ Radar Chart Update
+    updateRadarChart(avgTech, avgAesthetic, consistency, profileScore);
+
+    // ✅ Strengths & Growth Areas
+    renderStrengths(avgTech, avgAesthetic, highQuality, totalUploads);
+    renderGrowthAreas(avgTech, avgAesthetic, lowQuality, totalUploads);
+
+    // ✅ AI Narrative
+    generateNarrative(data);
+}
+
+function updateDonutChart(highPct, medPct, lowPct) {
+    const circumference = 100;
+    const gap = 2;
+
+    // High quality arc
+    document.getElementById("donutHigh").setAttribute("stroke-dasharray", `${highPct - gap}, 100`);
+    document.getElementById("donutHigh").setAttribute("stroke-dashoffset", "0");
+
+    // Medium quality arc
+    document.getElementById("donutMed").setAttribute("stroke-dasharray", `${medPct - gap}, 100`);
+    document.getElementById("donutMed").setAttribute("stroke-dashoffset", `-${highPct}`);
+
+    // Low quality arc
+    document.getElementById("donutLow").setAttribute("stroke-dasharray", `${lowPct - gap}, 100`);
+    document.getElementById("donutLow").setAttribute("stroke-dashoffset", `-${highPct + medPct}`);
+}
+
+function updateRadarChart(tech, aesthetic, consistency, score) {
+    // Map scores to radar polygon points
+    const cx = 100, cy = 100, maxR = 75;
+
+    const toPoint = (angle, value) => {
+        const r = (value / 100) * maxR;
+        const rad = (angle * Math.PI) / 180;
+        return {
+            x: cx + r * Math.cos(rad),
+            y: cy + r * Math.sin(rad)
+        };
+    };
+
+    const p1 = toPoint(-90, tech);         // Top: Technical
+    const p2 = toPoint(0, score);           // Right: Score
+    const p3 = toPoint(90, aesthetic);      // Bottom: Aesthetic
+    const p4 = toPoint(180, consistency);   // Left: Quality
+
+    const path = `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} L${p4.x},${p4.y} Z`;
+    document.getElementById("radarPath").setAttribute("d", path);
+}
+
+function renderStrengths(avgTech, avgAesthetic, highQuality, total) {
+    const strengths = [];
+
+    if (avgTech >= 70) {
+        strengths.push({
+            label: "Technical Excellence",
+            value: `${avgTech}%`,
+            bar: avgTech,
+            color: "bg-emerald-500/60"
+        });
+    }
+    if (avgAesthetic >= 70) {
+        strengths.push({
+            label: "Aesthetic Appeal",
+            value: `${avgAesthetic}%`,
+            bar: avgAesthetic,
+            color: "bg-emerald-500/60"
+        });
+    }
+    if (total > 0 && (highQuality / total) > 0.6) {
+        const pct = Math.round(highQuality / total * 100);
+        strengths.push({
+            label: "High Quality Rate",
+            value: `${pct}%`,
+            bar: pct,
+            color: "bg-emerald-500/60"
+        });
+    }
+
+    const list = document.getElementById("strengthsList");
+    if (strengths.length === 0) {
+        list.innerHTML = `<li class="text-slate-500 text-sm">Upload more images to identify your strengths!</li>`;
+        return;
+    }
+
+    list.innerHTML = strengths.map(s => `
+        <li>
+            <div class="flex items-center justify-between mb-1">
+                <span class="text-sm text-slate-300">${s.label}</span>
+                <span class="text-[10px] font-bold text-emerald-400">${s.value}</span>
+            </div>
+            <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full ${s.color} rounded-full" style="width: ${s.bar}%"></div>
+            </div>
+        </li>
+    `).join("");
+}
+
+function renderGrowthAreas(avgTech, avgAesthetic, lowQuality, total) {
+    const areas = [];
+
+    if (avgTech < 70) {
+        areas.push({
+            label: "Technical Quality",
+            value: `${avgTech}%`,
+            bar: avgTech,
+            tip: "Focus on sharpness and exposure"
+        });
+    }
+    if (avgAesthetic < 70) {
+        areas.push({
+            label: "Aesthetic Score",
+            value: `${avgAesthetic}%`,
+            bar: avgAesthetic,
+            tip: "Improve composition and lighting"
+        });
+    }
+    if (total > 0 && (lowQuality / total) > 0.2) {
+        const pct = Math.round(lowQuality / total * 100);
+        areas.push({
+            label: "Low Quality Images",
+            value: `${pct}% of uploads`,
+            bar: pct,
+            tip: "Review and improve before uploading"
+        });
+    }
+
+    const list = document.getElementById("growthList");
+    if (areas.length === 0) {
+        list.innerHTML = `<li class="text-slate-500 text-sm">Great job! No major growth areas detected.</li>`;
+        return;
+    }
+
+    list.innerHTML = areas.map(a => `
+        <li>
+            <div class="flex items-center justify-between mb-1">
+                <span class="text-sm text-slate-300">${a.label}</span>
+                <span class="text-[10px] font-bold text-amber-400">${a.value}</span>
+            </div>
+            <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-amber-500/60 rounded-full" style="width: ${a.bar}%"></div>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-1">${a.tip}</p>
+        </li>
+    `).join("");
+}
+
+function generateNarrative(data) {
+    const name = data.name || "Photographer";
+    const level = data.level || "Beginner";
+    const profileScore = data.profile_score || 0;
+    const avgTech = data.avg_technical_score || 0;
+    const avgAesthetic = data.avg_aesthetic_score || 0;
+    const total = data.total_uploads || 0;
+    const high = data.high_quality_count || 0;
+    const highPct = total > 0 ? Math.round(high / total * 100) : 0;
+
+    let narrative = "";
+
+    if (total === 0) {
+        narrative = `Welcome to PicPicky, ${name}! Start uploading your photos to get a personalized AI analysis of your photography style and quality profile.`;
+    } else if (level === "Expert") {
+        narrative = `${name}, your photography has reached an elite level. With a profile score of ${profileScore} and ${highPct}% of your images classified as high quality, you demonstrate exceptional mastery of both technical and aesthetic elements. Your technical score of ${avgTech} reflects precision in exposure, sharpness, and noise control, while your aesthetic score of ${avgAesthetic} shows a refined artistic eye. Continue pushing boundaries!`;
+    } else if (level === "Advanced") {
+        narrative = `${name}, you're demonstrating strong photography skills with a profile score of ${profileScore}. Your technical score of ${avgTech} shows solid command of camera settings and image quality. With ${highPct}% of your uploads rated as high quality, you're well on your way to expert level. Focus on consistently achieving high aesthetic scores to complete your evolution.`;
+    } else if (level === "Intermediate") {
+        narrative = `${name}, you're making great progress! With a profile score of ${profileScore} and ${total} images analyzed, the AI has identified both your strengths and opportunities for growth. Your technical score of ${avgTech} suggests good fundamentals, while your aesthetic score of ${avgAesthetic} indicates developing artistic sensibility. Keep experimenting with composition and lighting!`;
+    } else {
+        narrative = `Welcome to your photography journey, ${name}! With ${total} images analyzed so far, your profile score of ${profileScore} reflects your current starting point. Focus on the basics: ensure good lighting, stable shots for sharpness, and proper exposure. Every image you upload helps the AI better understand and guide your unique style. Keep shooting!`;
+    }
+
+    document.getElementById("aiNarrative").textContent = narrative;
+}
+
+// ========================================
+// PROFILE DROPDOWN FUNCTIONALITY
+// ========================================
+const profileMenuToggle = document.getElementById("profileMenuToggle");
+const profileDropdown = document.getElementById("profileDropdown");
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (profileMenuToggle && profileDropdown) {
+    // Toggle dropdown on click
+    profileMenuToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("hidden");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+        if (
+            !profileMenuToggle.contains(e.target) &&
+            !profileDropdown.contains(e.target)
+        ) {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+
+    // Close dropdown on Escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+}
+
+// Logout functionality
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+        // Clear stored auth data
+        localStorage.removeItem("token");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userEmail");
+
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("userName");
+        sessionStorage.removeItem("userEmail");
+
+        // Redirect to login page
+        window.location.href = "login.html";
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>PicPicky - Forgot Password</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#dae2fd",
+                        "tertiary": "#ffb784",
+                        "secondary": "#aec8f3",
+                        "background": "#0b1326",
+                        "surface-dim": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "secondary-fixed": "#d4e3ff",
+                        "inverse-primary": "#005faf",
+                        "secondary-fixed-dim": "#aec8f3",
+                        "primary-container": "#3e92f3",
+                        "on-background": "#dae2fd",
+                        "surface-container-low": "#131b2e",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "tertiary-fixed": "#ffdcc6",
+                        "secondary-container": "#2d486c",
+                        "on-tertiary-container": "#451f00",
+                        "on-secondary-fixed": "#001c3a",
+                        "on-primary": "#00315e",
+                        "on-secondary": "#153154",
+                        "on-error": "#690005",
+                        "outline": "#8b919e",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-on-surface": "#283044",
+                        "on-primary-fixed-variant": "#004785",
+                        "surface-container": "#171f33",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed": "#001c3a",
+                        "on-tertiary-fixed": "#301400",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "on-surface-variant": "#c1c7d4",
+                        "on-secondary-fixed-variant": "#2d486c",
+                        "primary": "#a5c8ff",
+                        "tertiary-container": "#db761b",
+                        "on-secondary-container": "#9db6e0",
+                        "surface-container-lowest": "#060e20",
+                        "error": "#ffb4ab",
+                        "primary-fixed": "#d4e3ff",
+                        "on-primary-container": "#002a53",
+                        "surface-bright": "#31394d",
+                        "outline-variant": "#414752",
+                        "on-tertiary": "#4f2500",
+                        "surface": "#0b1326",
+                        "on-surface": "#dae2fd",
+                        "surface-container-highest": "#2d3449",
+                        "surface-tint": "#a5c8ff",
+                        "surface-variant": "#2d3449"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1326;
+        }
+        .glass-panel {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased overflow-hidden">
+    <main class="flex min-h-screen w-full">
+        <!-- LEFT SIDE: Cinematic Photography Background -->
+        <section class="hidden lg:flex relative w-1/2 h-screen overflow-hidden">
+            <img alt="Professional camera lens" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8rKMSQaHewr_TVfQ2IXKAGI-DHw1W5zyeJQ1eMetJD3gjVL8kOPau8rPFBC2rYYGoigm9jW33UyRjDYl1tz5-StVNsgm-GQyIWMLIOQe-_moifIUysi1UZi81rpVbmPRD9NgShvhho2kTHHTUuJQIzJkpvKGdphgm-vnxv81ZVnuXjoVhixnuN75NrZKzZROmRKYrCo8692jCMe3a-8YAzW0Vc54gauNvg_iHchbdsHR9Sei1C9817KP8-cWiHAaG9Dxh07lyzqTC"/>
+            <!-- Dark Overlay Gradient -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-surface-container-lowest via-surface-container-lowest/60 to-transparent"></div>
+            <!-- Branding Content -->
+            <div class="relative z-10 flex flex-col justify-between p-16 h-full w-full">
+                <div class="max-w-xl">
+                    <h1 class="text-display-lg text-5xl font-extrabold tracking-tighter text-on-surface mb-6 leading-tight">
+                        Precision tools for the <span class="text-primary">visionary eye.</span>
+                    </h1>
+                    <p class="text-on-surface-variant text-xl font-medium tracking-tight leading-relaxed max-w-md">
+                        Intelligent visual quality analysis and photographer profiling system.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT SIDE: Forgot Password Form -->
+        <section class="flex flex-col items-center justify-center w-full lg:w-1/2 bg-surface p-8 md:p-24">
+            <div class="w-full max-w-md">
+                <div class="mb-12">
+                    <div class="flex justify-center mb-8">
+                        <div>
+                            <img 
+                            src="PIC-logo.png"
+                            class="h-28 scale-110 w-auto object-contain"
+                            alt="PicPicky Logo"
+                            />
+                        </div>
+                    </div>
+                    <h2 class="text-4xl font-extrabold tracking-tighter text-on-surface mb-4 text-center">Forgot Password</h2>
+                    <p class="text-on-surface-variant text-lg tracking-tight text-center">
+                        Enter your email and we'll send you a password reset link.
+                    </p>
+                </div>
+
+                <form class="space-y-8" id="forgotPasswordForm">
+                    <div class="group">
+                        <label class="block text-[10px] uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-2 ml-1" for="email">Email Address</label>
+                        <div class="relative">
+                            <input class="w-full bg-transparent border-0 border-b border-outline-variant py-4 px-1 text-on-surface placeholder:text-surface-container-highest focus:ring-0 focus:border-primary transition-all duration-300 body-md" id="email" name="email" placeholder="name@photographer.com" type="email" required/>
+                            <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-500 group-focus-within:w-full"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Message -->
+                    <div id="statusMessage" class="hidden p-4 rounded-lg text-sm"></div>
+                    
+                    <div class="pt-4 space-y-6">
+                        <button class="w-full h-16 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold text-lg rounded-xl shadow-2xl shadow-primary-container/20 hover:brightness-110 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2" type="submit" id="submitBtn">
+                            <span id="btnText">Send Reset Link</span>
+                            <span class="material-symbols-outlined text-xl" id="btnIcon">arrow_forward</span>
+                        </button>
+                        <div class="flex justify-center">
+                            <a class="text-on-surface-variant hover:text-primary transition-colors duration-300 flex items-center gap-2 font-medium" href="login.html">
+                                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                                <span>Back to Login</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Simple Footer Information -->
+            <footer class="absolute bottom-8 text-on-surface-variant/40 text-[10px] uppercase tracking-[0.15em] font-semibold">
+                © 2026 PicPicky Optical Systems
+            </footer>
+        </section>
+    </main>
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="fixed bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-primary-container/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <script>
+        const form = document.getElementById('forgotPasswordForm');
+        const statusMessage = document.getElementById('statusMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            // Disable button
+            submitBtn.disabled = true;
+            btnText.textContent = 'Sending...';
+            btnIcon.textContent = 'hourglass_empty';
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success
+                    statusMessage.className = 'p-4 rounded-lg text-sm bg-green-500/10 border border-green-500/20 text-green-400';
+                    statusMessage.textContent = '✅ Reset link sent! Check your email inbox.';
+                    statusMessage.classList.remove('hidden');
+                    form.reset();
+                } else {
+                    // Error
+                    statusMessage.className = 'p-4 rounded-lg text-sm bg-red-500/10 border border-red-500/20 text-red-400';
+                    statusMessage.textContent = `❌ ${data.detail}`;
+                    statusMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                statusMessage.className = 'p-4 rounded-lg text-sm bg-red-500/10 border border-red-500/20 text-red-400';
+                statusMessage.textContent = '❌ Network error. Please try again.';
+                statusMessage.classList.remove('hidden');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                btnText.textContent = 'Send Reset Link';
+                btnIcon.textContent = 'arrow_forward';
+            }
+        });
+    </script>
+</body>
+</html>

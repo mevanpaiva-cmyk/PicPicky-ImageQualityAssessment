@@ -1,0 +1,131 @@
+<aside class="w-64 flex flex-col border-r border-white/5 bg-slate-blue-950">
+  <div class="p-6 flex flex-col gap-8">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined font-bold">center_focus_strong</span>
+      </div>
+      <div>
+        <h1 class="text-lg font-extrabold tracking-tight leading-none text-white">PicPicky</h1>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">AI Analyst</p>
+      </div>
+    </div>
+
+    <nav class="flex flex-col gap-1.5">
+      <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="dashboard.html">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="text-sm font-medium">Dashboard</span>
+      </a>
+
+      <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg transition-all" href="upload.html">
+        <span class="material-symbols-outlined fill">cloud_upload</span>
+        <span class="text-sm font-semibold">Uploads</span>
+      </a>
+
+      <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="analysis.html">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-sm font-medium">Analysis / Results</span>
+      </a>
+
+      <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="best-album.html">
+        <span class="material-symbols-outlined">stars</span>
+        <span class="text-sm font-medium">Best Album</span>
+      </a>
+
+      <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="profile.html">
+        <span class="material-symbols-outlined">person_search</span>
+        <span class="text-sm font-medium">Profile / Insights</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="mt-auto p-6">
+    <div class="relative">
+      <!-- Clickable profile section -->
+      <button
+        id="profileMenuToggle"
+        type="button"
+        class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all text-left"
+      >
+        <div class="w-8 h-8 rounded-full bg-slate-blue-800 border border-white/10 flex items-center justify-center overflow-hidden">
+          <img
+            alt="User Avatar"
+            class="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXj44Bsgnc6vvQ-FkLkZmnsUHs1CGSRW8j4MhbckeRUb7G6TXh3Ar0gavhnMbXpEuu9iEHHmCuvyslcDqGR0rTTRnlUDfEFrVlOMCEJe0MLWFBzbP-F253Rk-OTxMKf6CWXL4g7xGmhS8IJyTT9UmqqA5bPPjPHRS-GFt207lBRNeO-RI20PlwgkVrkvhSP2HgL2r86SPVRr1qhH0UVcsL8oHSexGa5MnuPrlbVsrBE-_gxvtK9ZZx6pNZk94TsTq1waeReRFshP4b"
+          />
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <p id="profileName" class="text-xs font-bold text-white truncate">Nimmy Kim</p>
+          <p id="profileEmail" class="text-[10px] text-slate-400 truncate">nimmy@gmail.com</p>
+        </div>
+
+        <span class="material-symbols-outlined text-slate-500 text-sm">settings</span>
+      </button>
+
+      <!-- Dropdown -->
+      <div
+        id="profileDropdown"
+        class="hidden absolute bottom-full left-0 mb-2 w-full rounded-xl border border-white/10 bg-slate-blue-900 shadow-xl overflow-hidden z-50"
+      >
+        <a
+          href="profile.html"
+          class="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-all"
+        >
+          <span class="material-symbols-outlined text-base">person</span>
+          Profile
+        </a>
+
+        <button
+          id="logoutBtn"
+          type="button"
+          class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-all text-left"
+        >
+          <span class="material-symbols-outlined text-base">logout</span>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script>
+  const profileMenuToggle = document.getElementById("profileMenuToggle");
+  const profileDropdown = document.getElementById("profileDropdown");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (profileMenuToggle && profileDropdown) {
+    profileMenuToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      profileDropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function (e) {
+      if (
+        !profileMenuToggle.contains(e.target) &&
+        !profileDropdown.contains(e.target)
+      ) {
+        profileDropdown.classList.add("hidden");
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        profileDropdown.classList.add("hidden");
+      }
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("access_token");
+      sessionStorage.removeItem("user");
+
+      window.location.href = "login.html";
+    });
+  }
+</script>

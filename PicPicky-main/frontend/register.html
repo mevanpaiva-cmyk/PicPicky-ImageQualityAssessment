@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky - Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#207fdf",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                },
+                fontFamily: {
+                    "display": ["Inter", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+</script>
+<style type="text/tailwindcss">
+    body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .hero-overlay {
+        background: linear-gradient(to right, rgba(17, 25, 33, 0.4) 0%, rgba(17, 25, 33, 0.1) 100%);
+    }
+    .form-container-blur {
+        backdrop-filter: blur(8px);
+    }
+</style>
+</head>
+
+<body class="bg-background-dark text-slate-100 antialiased">
+<div class="flex h-screen w-full flex-col lg:flex-row">
+
+    <!-- ── Left Hero Panel ── -->
+    <div class="relative hidden lg:flex lg:w-3/5 xl:w-2/3 h-full overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
+            style="background-image: url('login_img.png');">
+        </div>
+        <div class="absolute inset-0 hero-overlay"></div>
+
+       
+    </div>
+
+    <!-- ── Right Form Panel ── -->
+    <div class="flex flex-1 flex-col justify-start items-center px-6 sm:px-12 lg:px-16 xl:px-24 bg-background-dark overflow-y-auto pt-6">
+        <div class="w-full max-w-md space-y-4">
+
+            <!-- Mobile Logo -->
+            <div class="flex lg:hidden items-center gap-3 mb-4 justify-center">
+                <div class="bg-primary rounded-lg p-2">
+                    <span class="material-symbols-outlined text-white text-xl">camera</span>
+                </div>
+                <span class="text-2xl font-bold tracking-tight">PicPicky</span>
+            </div>
+
+            <!-- ✅ Logo + Heading grouped together -->
+            <div class="flex flex-col items-center">
+                 
+                <div class="text-center space-y-2 -mt-2">
+                    <br>
+                    <h1 class="text-4xl font-bold text-white tracking-tight">Create Account</h1>
+                    <p class="text-slate-400 text-base">
+                        Join the community of visual experts and start profiling your work.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="registerForm" class="space-y-5">
+                <div class="space-y-4">
+
+                    <!-- Full Name -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="full-name">
+                            Full Name
+                        </label>
+                        <input
+                            class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                            id="full-name"
+                            name="full-name"
+                            placeholder="Alexander Thorne"
+                            type="text"
+                            required
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="email">
+                            Email Address
+                        </label>
+                        <input
+                            class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                            id="email"
+                            name="email"
+                            placeholder="name@photographer.com"
+                            type="email"
+                            required
+                            pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                            title="Please enter a valid email address"
+                        />
+                    </div>
+
+                    <!-- Password -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="password">
+                            Password
+                        </label>
+                        <div class="relative group">
+                            <input
+                                class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                id="password"
+                                name="password"
+                                placeholder="••••••••"
+                                type="password"
+                                required
+                            />
+                            <button
+                                onclick="togglePassword('password', this)"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                                type="button"
+                            >
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="confirm-password">
+                            Confirm Password
+                        </label>
+                        <div class="relative group">
+                            <input
+                                class="flex w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                id="confirm-password"
+                                name="confirm-password"
+                                placeholder="••••••••"
+                                type="password"
+                                required
+                            />
+                            <button
+                                onclick="togglePassword('confirm-password', this)"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                                type="button"
+                            >
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            </button>
+                        </div>
+
+                        <!-- Error Message -->
+                        <p id="registerError" class="mt-2 text-sm text-red-500 hidden"></p>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    By signing up, you agree to our
+                    <a class="text-primary hover:underline" href="#">Terms of Service</a>
+                    and
+                    <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                </p>
+
+                <!-- Submit Button -->
+                <div>
+                    <button
+                        class="flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-primary/30 active:scale-[0.98] transition-all"
+                        type="submit"
+                    >
+                        Sign Up for Free
+                    </button>
+                </div>
+            </form>
+
+            <!-- Sign In Link -->
+            <p class="text-center text-sm text-slate-500 dark:text-slate-400 pb-6">
+                Already have an account?
+                <a class="font-semibold text-primary hover:text-primary/80 transition-colors" href="login.html">
+                    Sign In
+                </a>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Toggle Password Visibility ──
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    const icon = btn.querySelector('span');
+    if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "visibility_off";
+    } else {
+        input.type = "password";
+        icon.textContent = "visibility";
+    }
+}
+
+// ── Register Form Submit ──
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const registerError = document.getElementById("registerError");
+
+    const name = document.getElementById("full-name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirm-password").value.trim();
+
+    // Hide previous errors
+    registerError.classList.add("hidden");
+
+    // Basic validation
+    if (!name || !email || !password || !confirmPassword) {
+        registerError.textContent = "All fields are required.";
+        registerError.classList.remove("hidden");
+        return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        registerError.textContent = "Please enter a valid email address.";
+        registerError.classList.remove("hidden");
+        return;
+    }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/;
+    if (!passwordRegex.test(password)) {
+        registerError.textContent =
+            "Password must be exactly 8 characters and include uppercase, lowercase, number and special character.";
+        registerError.classList.remove("hidden");
+        return;
+    }
+
+    // Confirm password match
+    if (password !== confirmPassword) {
+        registerError.textContent = "Passwords do not match.";
+        registerError.classList.remove("hidden");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("userName", name);
+            localStorage.setItem("userEmail", email);
+            window.location.href = "upload.html";
+        } else {
+            registerError.textContent = data.detail || "Registration failed.";
+            registerError.classList.remove("hidden");
+        }
+
+    } catch (error) {
+        registerError.textContent = "Server error. Please try again.";
+        registerError.classList.remove("hidden");
+    }
+});
+
+// ── Hide error on input ──
+["confirm-password", "email", "password", "full-name"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener("input", function() {
+            document.getElementById("registerError").classList.add("hidden");
+        });
+    }
+});
+</script>
+
+</body>
+</html>

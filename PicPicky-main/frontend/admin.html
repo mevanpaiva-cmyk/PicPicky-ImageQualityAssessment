@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "outline": "#8b919e",
+          "on-surface": "#dae2fd",
+          "secondary": "#aec8f3",
+          "on-error": "#690005",
+          "surface-dim": "#0b1326",
+          "background": "#0b1326",
+          "surface-bright": "#31394d",
+          "surface-container-highest": "#2d3449",
+          "inverse-primary": "#005faf",
+          "secondary-fixed-dim": "#aec8f3",
+          "primary": "#a5c8ff",
+          "surface-container-lowest": "#060e20",
+          "tertiary-fixed-dim": "#ffb784",
+          "surface-variant": "#2d3449",
+          "on-error-container": "#ffdad6",
+          "inverse-surface": "#dae2fd",
+          "on-secondary-fixed": "#001c3a",
+          "on-secondary-container": "#9db6e0",
+          "secondary-fixed": "#d4e3ff",
+          "on-secondary-fixed-variant": "#2d486c",
+          "surface": "#0b1326",
+          "surface-container-high": "#222a3d",
+          "error": "#ffb4ab",
+          "primary-fixed-dim": "#a5c8ff",
+          "outline-variant": "#414752",
+          "error-container": "#93000a",
+          "primary-container": "#3e92f3",
+          "surface-tint": "#a5c8ff",
+          "on-primary-fixed-variant": "#004785",
+          "tertiary-fixed": "#ffdcc6",
+          "on-tertiary-fixed-variant": "#713700",
+          "on-surface-variant": "#c1c7d4",
+          "tertiary-container": "#db761b",
+          "on-secondary": "#153154",
+          "tertiary": "#ffb784",
+          "on-tertiary-fixed": "#301400",
+          "inverse-on-surface": "#283044",
+          "secondary-container": "#2d486c",
+          "surface-container-low": "#131b2e",
+          "on-primary": "#00315e",
+          "on-primary-fixed": "#001c3a",
+          "surface-container": "#171f33",
+          "on-primary-container": "#002a53",
+          "primary-fixed": "#d4e3ff",
+          "on-tertiary-container": "#451f00",
+          "on-tertiary": "#4f2500",
+          "on-background": "#dae2fd"
+        },
+        borderRadius: {
+          "DEFAULT": "1rem",
+          "lg": "2rem",
+          "xl": "3rem",
+          "full": "9999px"
+        },
+        fontFamily: {
+          "headline": ["Inter"],
+          "body": ["Inter"],
+          "label": ["Inter"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background: 
+      radial-gradient(ellipse 80% 50% at 10% 0%, rgba(62,146,243,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(255,183,132,0.05) 0%, transparent 60%),
+      #0b1326;
+  }
+
+  /* ── Enhanced Glass Card ── */
+  .glass-card {
+    background: rgba(23, 31, 51, 0.72);
+    backdrop-filter: blur(28px);
+    border:3px solid rgba(165, 200, 255, 0.18);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(165, 200, 255, 0.06);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, 
+      rgba(165, 200, 255, 0.15) 0%, 
+      rgba(62, 146, 243, 0.08) 50%, 
+      rgba(165, 200, 255, 0.05) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .glass-card:hover {
+    border-color: rgba(165, 200, 255, 0.25);
+    box-shadow: 
+      0 12px 48px rgba(0, 0, 0, 0.35),
+      0 0 24px rgba(62, 146, 243, 0.12),
+      inset 0 1px 0 rgba(165, 200, 255, 0.10);
+    transform: translateY(-2px);
+  }
+
+  /* ── Metric Card Accents ── */
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(1)::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(62,146,243,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(2)::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(174,200,243,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(3)::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(255,183,132,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(4)::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(74,222,128,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(5)::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(219,118,27,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── Metric Card Border Colors ── */
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(1) {
+    border-color: rgba(62,146,243,0.35);
+  }
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(2) {
+    border-color: rgba(174,200,243,0.35);
+  }
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(3) {
+    border-color: rgba(255,183,132,0.35);
+  }
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(4) {
+    border-color: rgba(74,222,128,0.35);
+  }
+  .grid.grid-cols-1.md\:grid-cols-5.gap-6 > .glass-card:nth-child(5) {
+    border-color: rgba(219,118,27,0.35);
+  }
+
+  /* ── Enhanced Navigation ── */
+  nav {
+    background: rgba(11, 19, 38, 0.85) !important;
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(165, 200, 255, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  nav a.border-b-2 {
+    position: relative;
+  }
+  nav a.border-b-2::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3e92f3, #a5c8ff);
+    border-radius: 2px;
+  }
+
+  /* ── Enhanced Time Range Tabs ── */
+  .flex.bg-surface-container-high.rounded-full.p-1 {
+    background: rgba(34, 42, 61, 0.8) !important;
+    border: 3px solid rgba(165, 200, 255, 0.18);
+    box-shadow: inset 0 1px 0 rgba(165, 200, 255, 0.05);
+  }
+
+  .flex.bg-surface-container-high.rounded-full.p-1 button.bg-primary {
+    background: linear-gradient(135deg, #3e92f3 0%, #a5c8ff 100%) !important;
+    color: #00315e !important;
+    box-shadow: 0 0 16px rgba(62, 146, 243, 0.4);
+    font-weight: 700;
+  }
+
+  .flex.bg-surface-container-high.rounded-full.p-1 button:not(.bg-primary):hover {
+    background: rgba(62, 146, 243, 0.15) !important;
+    color: #a5c8ff !important;
+  }
+
+  /* ── Enhanced Chart Bars ── */
+  .h-64.flex.items-end.justify-between.gap-2.px-4 > div {
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .h-64.flex.items-end.justify-between.gap-2.px-4 > div::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, 
+      rgba(62, 146, 243, 0.25) 0%, 
+      rgba(165, 200, 255, 0.15) 100%);
+    border-radius: 8px 8px 0 0;
+    opacity: 0.8;
+  }
+
+  .h-64.flex.items-end.justify-between.gap-2.px-4 > div.bg-primary-container::before {
+    background: linear-gradient(to top, #3e92f3 0%, #a5c8ff 100%);
+    opacity: 1;
+    box-shadow: 0 0 24px rgba(62, 146, 243, 0.45);
+  }
+
+  .h-64.flex.items-end.justify-between.gap-2.px-4 > div:hover::before {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+
+  /* ── Enhanced Table ── */
+  table tbody tr {
+    transition: all 0.2s ease;
+  }
+
+  table tbody tr.hover\:bg-surface-container-low:hover {
+    background: rgba(62, 146, 243, 0.08) !important;
+    box-shadow: inset 4px 0 0 #3e92f3;
+  }
+
+  /* Enhanced badges */
+  span.rounded-full.bg-green-500\/10 {
+    background: linear-gradient(135deg, rgba(74,222,128,0.15) 0%, rgba(34,197,94,0.1) 100%) !important;
+    border: 3px solid rgba(165, 200, 255, 0.18) !important;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
+  }
+
+  span.rounded-full.bg-primary\/10 {
+    background: linear-gradient(135deg, rgba(165,200,255,0.15) 0%, rgba(62,146,243,0.1) 100%) !important;
+    border: 3px solid rgba(165, 200, 255, 0.18) !important;
+    box-shadow: 0 0 8px rgba(62, 146, 243, 0.2);
+  }
+
+  span.rounded-full.bg-secondary\/10 {
+    background: linear-gradient(135deg, rgba(174,200,243,0.15) 0%, rgba(45,72,108,0.1) 100%) !important;
+    border: 3px solid rgba(165, 200, 255, 0.18) !important;
+    box-shadow: 0 0 8px rgba(174, 200, 243, 0.2);
+  }
+
+  /* ── Enhanced Alert Cards ── */
+  .glass-card.border-l-4.border-error {
+    border-left: 4px solid #ffb4ab !important;
+    background: linear-gradient(135deg, rgba(147,0,10,0.15) 0%, rgba(23,31,51,0.75) 70%) !important;
+    box-shadow: 0 0 20px rgba(255, 180, 171, 0.15);
+  }
+
+  .glass-card.border-l-4.border-error:hover {
+    box-shadow: 0 0 32px rgba(255, 180, 171, 0.25);
+  }
+
+  .glass-card.border-l-4.border-tertiary {
+    border-left: 4px solid #ffb784 !important;
+    background: linear-gradient(135deg, rgba(219,118,27,0.12) 0%, rgba(23,31,51,0.75) 70%) !important;
+    box-shadow: 0 0 20px rgba(255, 183, 132, 0.12);
+  }
+
+  .glass-card.border-l-4.border-tertiary:hover {
+    box-shadow: 0 0 32px rgba(255, 183, 132, 0.2);
+  }
+
+  /* ── Enhanced Avatar ── */
+  img.rounded-full.border {
+    border: 3px solid transparent !important;
+    background: linear-gradient(#0b1326, #0b1326) padding-box,
+                linear-gradient(135deg, #3e92f3, #a5c8ff) border-box;
+    box-shadow: 0 0 16px rgba(62, 146, 243, 0.3);
+  }
+
+  /* ── Enhanced Footer ── */
+  footer {
+    border-top: 1px solid rgba(165, 200, 255, 0.1) !important;
+    background: rgba(11, 19, 38, 0.6);
+    backdrop-filter: blur(12px);
+  }
+
+  /* ── Scrollbar ── */
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { 
+    background: linear-gradient(to bottom, #3e92f3, #a5c8ff); 
+    border-radius: 10px; 
+  }
+
+  /* ── Selection ── */
+  ::selection {
+    background: rgba(62, 146, 243, 0.3);
+    color: #dae2fd;
+  }
+</style>
+</head>
+
+<body class="bg-background text-on-surface selection:bg-primary/30 min-h-screen">
+
+<!-- ── Navbar ── -->
+<nav class="w-full top-0 sticky z-50 bg-[#0b1326] dark:bg-[#0b1326] flex justify-between items-center px-8 py-4 max-w-full backdrop-blur-xl bg-opacity-80">
+
+    <!-- ✅ Brand Logo replacing PicPicky text -->
+    <div class="flex flex-col justify-center">
+        <img
+            src="PIC-logo.png"
+            class="h-12 w-auto object-contain"
+            alt="PicPicky Logo"
+        >
+        <span class="font-inter text-xs uppercase tracking-widest text-slate-400 mt-1">
+            System overview and control center
+        </span>
+    </div>
+
+    <!-- Nav Links -->
+    <div class="hidden md:flex items-center space-x-8">
+        <a class="font-inter text-xs uppercase tracking-widest text-slate-400 font-medium hover:text-[#a5c8ff] transition-colors duration-200" href="#">Dashboard</a>
+        <a class="font-inter text-xs uppercase tracking-widest text-slate-400 font-medium hover:text-[#a5c8ff] transition-colors duration-200" href="#">Users</a>
+        <a class="font-inter text-xs uppercase tracking-widest text-slate-400 font-medium hover:text-[#a5c8ff] transition-colors duration-200" href="#">Alert</a>
+        <a class="font-inter text-xs uppercase tracking-widest text-slate-400 font-medium hover:text-[#a5c8ff] transition-colors duration-200 cursor-pointer" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Admin Info -->
+    <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-3 pl-4 border-l border-outline-variant/30">
+            <div class="text-right">
+                <p id="adminName" class="text-sm font-bold text-on-surface"></p>
+                <p id="adminRole" class="text-[10px] text-primary/70 uppercase tracking-tighter"></p>
+            </div>
+            <img
+                alt="Admin profile photo"
+                class="w-10 h-10 rounded-full border border-primary/20"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYxDLUtSnw_LLKVxRcirW0mDyaZpL0oIxifDCjmmAmZ16RiEw4ti-gnYA_ykmBDlHg0CrdwPuGnQVKFkxXC22dmkVsQGx3x9kbHRHu61y8LZxJBhLSLOFLIxHF84zCewVl2uPihYplSBC6FcxpF9VDz4_ycf84Fz8e4at_Ytss5gDGu_VKiq8cXAu8fsOk0QhCwH3Kb4DDQD-bNGlwlzON7R1CaCz6etVDI6wXwZdYB_SbJ38uweF06WVsz6UBaituA8LVS71deRlg"
+            />
+        </div>
+    </div>
+</nav>
+
+<!-- ── Main Content ── -->
+<main class="px-8 py-10 max-w-[1600px] mx-auto space-y-12">
+
+    <!-- ── Metric Cards ── -->
+    <section class="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+            <p class="text-label-md text-on-surface-variant font-medium mb-2 uppercase tracking-widest text-[10px]">Total Users</p>
+            <h3 class="text-3xl font-bold tracking-tight text-primary">128.4k</h3>
+        </div>
+        <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+            <p class="text-label-md text-on-surface-variant font-medium mb-2 uppercase tracking-widest text-[10px]">Total Uploads</p>
+            <h3 class="text-3xl font-bold tracking-tight text-on-surface">2.1M</h3>
+        </div>
+        <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+            <p class="text-label-md text-on-surface-variant font-medium mb-2 uppercase tracking-widest text-[10px]">Processed Today</p>
+            <h3 class="text-3xl font-bold tracking-tight text-on-surface">14.2k</h3>
+        </div>
+        <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+            <p class="text-label-md text-on-surface-variant font-medium mb-2 uppercase tracking-widest text-[10px]">Avg Analysis Time</p>
+            <h3 class="text-3xl font-bold tracking-tight text-on-surface">1.2s</h3>
+        </div>
+        <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+            <p class="text-label-md text-on-surface-variant font-medium mb-2 uppercase tracking-widest text-[10px]">Total Views</p>
+            <h3 class="text-3xl font-bold tracking-tight text-on-surface">8.4M</h3>
+        </div>
+    </section>
+
+    <!-- ── Upload Activity Chart ── -->
+    <section class="glass-card p-8 rounded-lg relative overflow-hidden">
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-on-surface tracking-tight">Upload Activity Trends</h2>
+                <p class="text-on-surface-variant text-sm">Visualizing global processing volume over the last 24 hours</p>
+            </div>
+            <div class="flex bg-surface-container-high rounded-full p-1">
+                <button class="px-4 py-1 text-xs font-bold rounded-full bg-primary text-on-primary">24H</button>
+                <button class="px-4 py-1 text-xs font-bold rounded-full text-on-surface-variant">7D</button>
+                <button class="px-4 py-1 text-xs font-bold rounded-full text-on-surface-variant">30D</button>
+            </div>
+        </div>
+        <div class="h-64 flex items-end justify-between gap-2 px-4">
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[40%] transition-all hover:bg-primary-container/40 relative group">
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-on-primary text-[10px] px-2 py-1 rounded">1.2k</div>
+            </div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[60%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[45%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-primary-container rounded-t-full h-[85%] transition-all relative group shadow-[0_0_20px_rgba(62,146,243,0.3)]">
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-100 bg-primary text-on-primary text-[10px] px-2 py-1 rounded">2.4k</div>
+            </div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[70%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[55%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[90%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[65%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-primary-container/80 rounded-t-full h-[75%] transition-all relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[40%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[30%] transition-all hover:bg-primary-container/40 relative group"></div>
+            <div class="w-full bg-surface-container-high/40 rounded-t-full h-[50%] transition-all hover:bg-primary-container/40 relative group"></div>
+        </div>
+        <div class="flex justify-between mt-6 px-4 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">
+            <span>00:00</span>
+            <span>04:00</span>
+            <span>08:00</span>
+            <span>12:00</span>
+            <span>16:00</span>
+            <span>20:00</span>
+            <span>23:59</span>
+        </div>
+    </section>
+
+    <!-- ── Activity Table + Alerts ── -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <!-- Recent User Activity -->
+        <div class="lg:col-span-2 glass-card p-8 rounded-lg overflow-hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-bold text-on-surface tracking-tight">Recent User Activity</h2>
+                <button class="text-primary text-xs font-bold uppercase tracking-widest hover:underline">View All</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="text-left border-b border-outline-variant/10">
+                            <th class="pb-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">User</th>
+                            <th class="pb-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Action</th>
+                            <th class="pb-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Status</th>
+                            <th class="pb-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold text-right">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="py-4 flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-primary">JD</div>
+                                <span class="font-medium">Julian Dash</span>
+                            </td>
+                            <td class="py-4 text-on-surface-variant">Batch Upload (42 images)</td>
+                            <td class="py-4">
+                                <span class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 text-[10px] font-bold border border-green-500/20">SUCCESS</span>
+                            </td>
+                            <td class="py-4 text-right text-on-surface-variant text-[11px]">2 mins ago</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container-low transition-colors">
+                            <td class="py-4 flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-secondary">AM</div>
+                                <span class="font-medium">Avery Miller</span>
+                            </td>
+                            <td class="py-4 text-on-surface-variant">API Key Regenerated</td>
+                            <td class="py-4">
+                                <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold border border-primary/20">INFO</span>
+                            </td>
+                            <td class="py-4 text-right text-on-surface-variant text-[11px]">14 mins ago</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container-low transition-colors">
+                            <td class="py-4 flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-tertiary">SK</div>
+                                <span class="font-medium">Sarah Kane</span>
+                            </td>
+                            <td class="py-4 text-on-surface-variant">High-res Processing</td>
+                            <td class="py-4">
+                                <span class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 text-[10px] font-bold border border-green-500/20">SUCCESS</span>
+                            </td>
+                            <td class="py-4 text-right text-on-surface-variant text-[11px]">45 mins ago</td>
+                        </tr>
+                        <tr class="hover:bg-surface-container-low transition-colors">
+                            <td class="py-4 flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-on-error">RR</div>
+                                <span class="font-medium">Rick Ross</span>
+                            </td>
+                            <td class="py-4 text-on-surface-variant">Account Upgrade</td>
+                            <td class="py-4">
+                                <span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold border border-secondary/20">PENDING</span>
+                            </td>
+                            <td class="py-4 text-right text-on-surface-variant text-[11px]">1 hour ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Critical Alerts -->
+        <div class="space-y-6">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-xl font-bold text-on-surface tracking-tight">Critical Alerts</h2>
+                <span class="w-5 h-5 bg-error text-on-error flex items-center justify-center rounded-full text-[10px] font-black">3</span>
+            </div>
+            <div class="glass-card p-5 rounded-lg border-l-4 border-error hover:translate-x-1 transition-transform cursor-pointer">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+                    <span class="text-[10px] text-on-surface-variant uppercase font-bold">Priority: High</span>
+                </div>
+                <h4 class="text-sm font-bold text-on-surface">Failed Uploads Spike</h4>
+                <p class="text-xs text-on-surface-variant mt-1">45 uploads failed in the US-East region in the last 10 minutes.</p>
+            </div>
+            <div class="glass-card p-5 rounded-lg border-l-4 border-tertiary hover:translate-x-1 transition-transform cursor-pointer">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    <span class="text-[10px] text-on-surface-variant uppercase font-bold">Priority: Med</span>
+                </div>
+                <h4 class="text-sm font-bold text-on-surface">Latency Spikes</h4>
+                <p class="text-xs text-on-surface-variant mt-1">Analysis response times increased by 40% globally.</p>
+            </div>
+            <div class="glass-card p-5 rounded-lg border-l-4 border-error hover:translate-x-1 transition-transform cursor-pointer">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">database</span>
+                    <span class="text-[10px] text-on-surface-variant uppercase font-bold">Priority: High</span>
+                </div>
+                <h4 class="text-sm font-bold text-on-surface">Storage Limit Warning</h4>
+                <p class="text-xs text-on-surface-variant mt-1">Main storage cluster (Cluster-A) is at 94% capacity.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- ── Footer ── -->
+<footer class="mt-20 py-10 border-t border-outline-variant/10">
+    <div class="max-w-[1600px] mx-auto px-8 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <!-- ✅ Brand Logo in footer replacing PicPicky text -->
+            <img
+                src="PIC-logo.png"
+                class="h-10 w-auto object-contain"
+                alt="PicPicky Logo"
+            >
+            <span class="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                © 2026 Admin Panel
+            </span>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // ── Read admin session set by login.html ──
+    const adminSession = sessionStorage.getItem('adminSession');
+
+    if (!adminSession) {
+        window.location.href = "login.html";
+    } else {
+        const session = JSON.parse(adminSession);
+        document.getElementById("adminName").textContent = session.name || "Admin";
+        document.getElementById("adminRole").textContent = session.role || "Admin";
+    }
+</script>
+
+<script src="admin-functions.js"></script>
+<script src="admin-auth.js"></script>
+
+</body>
+</html>

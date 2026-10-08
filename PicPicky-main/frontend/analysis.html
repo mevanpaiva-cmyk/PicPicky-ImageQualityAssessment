@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky - Analysis History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#207fdf",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                },
+                fontFamily: { "display": ["Inter", "sans-serif"] },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+        },
+    }
+</script>
+<style type="text/tailwindcss">
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #111921; }
+    ::-webkit-scrollbar-thumb { background: #293038; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a4450; }
+</style>
+</head>
+
+<body class="bg-background-dark text-slate-200 font-display">
+<div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex flex-col border-r border-white/5 bg-slate-blue-950">
+        <div class="p-6 flex flex-col gap-8">
+            <div class="flex items-center gap-3">
+                <div>
+                    <a href="http://127.0.0.1:5500/frontend/home.html">
+                        <img 
+                        src="PIC-logo.png"
+                        class="h-42 scale-110 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                        alt="PicPicky Logo"
+                        />
+                    </a>
+                </div>
+            </div>
+            <nav class="flex flex-col gap-1.5">
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="dashboard.html">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="upload.html">
+                    <span class="material-symbols-outlined">cloud_upload</span>
+                    <span class="text-sm font-medium">Uploads</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg transition-all" href="analysis.html">
+                    <span class="material-symbols-outlined fill">analytics</span>
+                    <span class="text-sm font-semibold">Analysis / Results</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="best-album.html">
+                    <span class="material-symbols-outlined">stars</span>
+                    <span class="text-sm font-medium">Best Album</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="profile.html">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <span class="text-sm font-medium">Profile / Insights</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Profile Section with Dropdown -->
+        <div class="mt-auto p-6">
+            <div class="relative">
+                <button
+                    id="profileMenuToggle"
+                    type="button"
+                    class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all text-left"
+                >
+                    <div class="w-8 h-8 rounded-full bg-slate-700 border border-white/10 flex items-center justify-center text-white font-bold text-sm" id="avatarInitial"></div>
+                    <div class="flex-1 min-w-0">
+                        <p id="profileName" class="text-xs font-bold text-white truncate"></p>
+                        <p id="profileEmail" class="text-[10px] text-slate-400 truncate"></p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500 text-sm">settings</span>
+                </button>
+
+                <div
+                    id="profileDropdown"
+                    class="hidden absolute bottom-full left-0 mb-2 w-full rounded-xl border border-white/10 bg-slate-blue-900 shadow-xl overflow-hidden z-50"
+                >
+                    
+                        href="profile.html"
+                        class="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-all"
+                    >
+                        <span class="material-symbols-outlined text-base">person</span>
+                        Profile
+                    </a>
+
+                    <button
+                        id="logoutBtn"
+                        type="button"
+                        class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-all text-left"
+                    >
+                        <span class="material-symbols-outlined text-base">logout</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <div class="max-w-[1600px] mx-auto w-full px-8 py-10">
+
+            <!-- Header Section -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-3xl font-black tracking-tight text-white">Analysis History</h2>
+                        <p id="totalCountText" class="text-slate-400 text-sm mt-1">Loading images...</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="relative block w-full md:w-64">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span class="material-symbols-outlined text-slate-400 text-xl">search</span>
+                            </span>
+                            <input id="searchInput" class="block w-full bg-slate-800 border-none rounded-lg py-2.5 pl-10 pr-3 text-sm placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 text-slate-200" placeholder="Search by filename..." type="text"/>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center bg-slate-800 rounded-lg p-1">
+                        <button id="sortDateBtn" onclick="sortImages('date')" class="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-700 shadow-sm text-white">
+                            <span class="material-symbols-outlined text-sm">calendar_month</span> Sort by Date
+                        </button>
+                        <button id="sortScoreBtn" onclick="sortImages('score')" class="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors">
+                            <span class="material-symbols-outlined text-sm">stars</span> Quality Score
+                        </button>
+                    </div>
+                    <div class="h-6 w-px bg-slate-800 mx-1"></div>
+                    <button id="filterAll" onclick="filterImages('all')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+                        All
+                    </button>
+                    <button id="filterBest" onclick="filterImages('best')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold border border-transparent hover:border-slate-700 transition-all">
+                        <span class="material-symbols-outlined text-sm">check_circle</span> Best Only
+                    </button>
+                    <button id="filterDuplicate" onclick="filterImages('duplicate')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold border border-transparent hover:border-slate-700 transition-all">
+                        <span class="material-symbols-outlined text-sm">content_copy</span> Duplicates
+                    </button>
+                    <button id="filterBlurry" onclick="filterImages('blurry')" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold border border-transparent hover:border-slate-700 transition-all">
+                        <span class="material-symbols-outlined text-sm">blur_on</span> Blurry
+                    </button>
+                </div>
+            </div>
+
+            <!-- Score Explanation Card -->
+            <div class="mb-8 bg-primary/5 border border-primary/20 rounded-xl p-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-primary text-xl">info</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                            Understanding Your Scores
+                            <button onclick="toggleInfo()" class="text-xs text-primary hover:underline cursor-pointer">
+                                <span id="toggleText">Show Details</span>
+                            </button>
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-3">
+                            Each image receives a <strong class="text-white">Composite Score</strong> displayed in the top-right corner.
+                        </p>
+                        
+                        <div id="scoreDetails" class="hidden space-y-3 pt-3 border-t border-white/10">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-slate-800/50 rounded-lg p-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="material-symbols-outlined text-primary text-sm">engineering</span>
+                                        <h4 class="font-bold text-white text-sm">Technical Score</h4>
+                                    </div>
+                                    <p class="text-xs text-slate-400 leading-relaxed">
+                                        Measures sharpness, exposure accuracy, noise control, saturation balance, and contrast quality.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-slate-800/50 rounded-lg p-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="material-symbols-outlined text-amber-400 text-sm">palette</span>
+                                        <h4 class="font-bold text-white text-sm">Aesthetic Score</h4>
+                                    </div>
+                                    <p class="text-xs text-slate-400 leading-relaxed">
+                                        AI-powered (CLIP-IQA model) rating of visual appeal, composition, and artistic quality.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-slate-800/50 rounded-lg p-4 border border-primary/30">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="material-symbols-outlined text-emerald-400 text-sm">query_stats</span>
+                                        <h4 class="font-bold text-white text-sm">Composite Score</h4>
+                                    </div>
+                                    <p class="text-xs text-slate-400 leading-relaxed">
+                                        <strong class="text-white">(Technical + Aesthetic) ÷ 2</strong> — The overall quality indicator shown on each image.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-6 pt-2">
+                                <p class="text-xs font-bold text-slate-500 uppercase">Score Ranges:</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                    <span class="text-xs text-slate-400">85-100 (Excellent)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                    <span class="text-xs text-slate-400">70-84 (Good)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                    <span class="text-xs text-slate-400">50-69 (Average)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <span class="text-xs text-slate-400">0-49 (Needs Work)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="flex flex-col items-center justify-center py-20 text-slate-400">
+                <span class="material-symbols-outlined text-5xl animate-spin mb-4">refresh</span>
+                <p class="text-sm font-medium">Loading your images...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-slate-400">
+                <span class="material-symbols-outlined text-6xl mb-4">image_not_supported</span>
+                <p class="text-lg font-bold text-white mb-2">No images found</p>
+                <p class="text-sm mb-6">Upload some images to see analysis results here!</p>
+                <a href="upload.html" class="px-6 py-3 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/80 transition-colors">
+                    Upload Images
+                </a>
+            </div>
+
+            <!-- Images Container -->
+            <div id="imagesContainer" class="hidden">
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- Image Detail Modal -->
+<div id="imageModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-white/10">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+            <h3 id="modalFilename" class="text-lg font-bold text-white truncate"></h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-6">
+            <!-- Image Preview -->
+            <img id="modalImage" src="" alt="" class="w-full h-64 object-cover rounded-xl"/>
+
+            <!-- Scores -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-slate-400 text-xs mb-1">Technical Score</p>
+                    <p id="modalTechnical" class="text-3xl font-black text-primary"></p>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-slate-400 text-xs mb-1">Aesthetic Score</p>
+                    <p id="modalAesthetic" class="text-3xl font-black text-amber-400"></p>
+                </div>
+            </div>
+
+            <!-- Flags -->
+            <div class="flex gap-3">
+                <div id="modalBlurFlag" class="hidden flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <span class="material-symbols-outlined text-red-400 text-sm">blur_on</span>
+                    <span class="text-red-400 text-xs font-bold">Blurry Image</span>
+                </div>
+                <div id="modalDupFlag" class="hidden flex items-center gap-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <span class="material-symbols-outlined text-yellow-400 text-sm">content_copy</span>
+                    <span class="text-yellow-400 text-xs font-bold">Duplicate</span>
+                </div>
+            </div>
+
+            <!-- Verdict -->
+            <div class="bg-slate-800 rounded-xl p-4">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Verdict</p>
+                <p id="modalVerdict" class="text-white text-sm"></p>
+            </div>
+
+            <!-- Detailed Scores -->
+            <div class="space-y-3">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Detailed Breakdown</p>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Sharpness</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barSharpness" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valSharpness" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Exposure</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barExposure" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valExposure" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Noise Control</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barNoise" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valNoise" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Saturation</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barSaturation" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valSaturation" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Contrast</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barContrast" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valContrast" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strengths -->
+            <div id="strengthsSection" class="hidden">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Strengths</p>
+                <ul id="modalStrengths" class="space-y-1"></ul>
+            </div>
+
+            <!-- Issues -->
+            <div id="issuesSection" class="hidden">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Issues</p>
+                <ul id="modalIssues" class="space-y-1"></ul>
+            </div>
+
+            <!-- Suggestions -->
+            <div id="suggestionsSection" class="hidden">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Suggestions</p>
+                <ul id="modalSuggestions" class="space-y-1"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+let allImages = [];
+let currentFilter = 'all';
+let currentSort = 'date';
+
+// ✅ Helper: Build authenticated image URL via your decrypt route
+function getImageUrl(imageId) {
+    const token = localStorage.getItem("token");
+    // We can't pass auth headers via <img src>, so we use a blob approach
+    return `${API_BASE}/image/${imageId}`;
+}
+
+// ✅ Load image with auth token and return a blob URL (for <img> tags)
+async function loadAuthImage(imageId, imgElement) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await fetch(`${API_BASE}/image/${imageId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("Failed to load");
+        const blob = await response.blob();
+        imgElement.src = URL.createObjectURL(blob);
+    } catch (err) {
+        imgElement.src = "https://via.placeholder.com/400x500?text=Load+Error";
+    }
+}
+
+// ✅ On Page Load
+document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    const token = localStorage.getItem("token");
+
+    if (!userName || !token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("profileName").textContent = userName;
+    document.getElementById("profileEmail").textContent = userEmail;
+    document.getElementById("avatarInitial").textContent = userName.charAt(0).toUpperCase();
+
+    fetchImages(token);
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+        renderImages();
+    });
+});
+
+// ✅ Fetch All Images from Backend
+async function fetchImages(token) {
+    try {
+        const response = await fetch(`${API_BASE}/my-images`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const data = await response.json();
+        allImages = data.images || [];
+
+        document.getElementById("loadingState").classList.add("hidden");
+
+        if (allImages.length === 0) {
+            document.getElementById("emptyState").classList.remove("hidden");
+        } else {
+            document.getElementById("imagesContainer").classList.remove("hidden");
+            document.getElementById("totalCountText").textContent =
+                `${allImages.length} image${allImages.length !== 1 ? 's' : ''} analyzed across your library`;
+            renderImages();
+        }
+
+    } catch (error) {
+        console.error("Error fetching images:", error);
+        document.getElementById("loadingState").innerHTML = `
+            <span class="material-symbols-outlined text-5xl text-red-400 mb-4">error</span>
+            <p class="text-red-400 text-sm font-medium">Failed to load images. Is the server running?</p>
+        `;
+    }
+}
+
+// ✅ Filter Images
+function filterImages(type) {
+    currentFilter = type;
+
+    const buttons = ['filterAll', 'filterBest', 'filterDuplicate', 'filterBlurry'];
+    buttons.forEach(id => {
+        document.getElementById(id).className =
+            "flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold border border-transparent hover:border-slate-700 transition-all";
+    });
+
+    const activeBtn = {
+        'all': 'filterAll',
+        'best': 'filterBest',
+        'duplicate': 'filterDuplicate',
+        'blurry': 'filterBlurry'
+    }[type];
+
+    document.getElementById(activeBtn).className =
+        "flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-bold border border-primary/20";
+
+    renderImages();
+}
+
+// ✅ Sort Images
+function sortImages(type) {
+    currentSort = type;
+
+    document.getElementById("sortDateBtn").className =
+        "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors";
+    document.getElementById("sortScoreBtn").className =
+        "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors";
+
+    if (type === 'date') {
+        document.getElementById("sortDateBtn").className =
+            "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-700 shadow-sm text-white";
+    } else {
+        document.getElementById("sortScoreBtn").className =
+            "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-700 shadow-sm text-white";
+    }
+
+    renderImages();
+}
+
+// ✅ Render Images (with filter, sort, search)
+function renderImages() {
+    const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+
+    let filtered = allImages.filter(img => {
+        if (currentFilter === 'best') return img.aesthetic_score >= 75 && !img.is_blurry && !img.is_duplicate;
+        if (currentFilter === 'duplicate') return img.is_duplicate === true;
+        if (currentFilter === 'blurry') return img.is_blurry === true;
+        return true;
+    });
+
+    if (searchQuery) {
+        filtered = filtered.filter(img =>
+            img.filename.toLowerCase().includes(searchQuery)
+        );
+    }
+
+    if (currentSort === 'date') {
+        filtered.sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+    } else {
+        filtered.sort((a, b) => b.aesthetic_score - a.aesthetic_score);
+    }
+
+    // Group by date
+    const groups = {};
+    filtered.forEach(img => {
+        const date = new Date(img.uploaded_at);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        let label;
+        if (date.toDateString() === today.toDateString()) {
+            label = "Today";
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            label = "Yesterday";
+        } else {
+            label = date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+        }
+
+        if (!groups[label]) groups[label] = [];
+        groups[label].push(img);
+    });
+
+    const container = document.getElementById("imagesContainer");
+    container.innerHTML = "";
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-20 text-slate-400">
+                <span class="material-symbols-outlined text-6xl mb-4">search_off</span>
+                <p class="text-lg font-bold text-white mb-2">No images match</p>
+                <p class="text-sm">Try a different filter or search term</p>
+            </div>
+        `;
+        return;
+    }
+
+    Object.keys(groups).forEach(label => {
+        const section = document.createElement("div");
+        section.className = "mb-10";
+        section.innerHTML = `
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 px-2 flex items-center gap-4">
+                ${label}
+                <span class="flex-1 h-px bg-slate-800"></span>
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="grid-${label.replace(/\s/g, '-')}">
+                ${groups[label].map(img => createPhotoCard(img)).join("")}
+            </div>
+        `;
+        container.appendChild(section);
+
+        // ✅ Load authenticated images after DOM is ready
+        groups[label].forEach(img => {
+            const imgEl = document.getElementById(`img-${img._id}`);
+            if (imgEl) loadAuthImage(img._id, imgEl);
+        });
+    });
+}
+
+// ✅ Create Photo Card HTML
+function createPhotoCard(img) {
+    const score = parseFloat((img.aesthetic_score || 0)).toFixed(2);
+    const techScore = parseFloat((img.technical_score || 0)).toFixed(2);
+    const compositeScore = ((parseFloat(score) + parseFloat(techScore)) / 2).toFixed(2);
+
+    const scoreColor = compositeScore >= 75 ? "#207fdf" :
+                       compositeScore >= 50 ? "#f59e0b" : "#ef4444";
+
+    let badges = "";
+    if (compositeScore >= 85 && !img.is_blurry && !img.is_duplicate) {
+        badges += `<span class="bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-md">Best</span>`;
+    }
+    if (img.is_blurry) {
+        badges += `<div class="bg-white/10 backdrop-blur-md p-1.5 rounded-lg border border-white/20" title="Blurry Detected">
+                    <span class="material-symbols-outlined text-white text-sm">blur_on</span>
+                   </div>`;
+    }
+    if (img.is_duplicate) {
+        badges += `<div class="bg-white/10 backdrop-blur-md p-1.5 rounded-lg border border-white/20" title="Duplicate Found">
+                    <span class="material-symbols-outlined text-white text-sm">content_copy</span>
+                   </div>`;
+    }
+
+    const cardClass = img.is_duplicate
+        ? "group relative aspect-[4/5] bg-slate-800 rounded-xl overflow-hidden shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl opacity-60 grayscale hover:grayscale-0 hover:opacity-100 duration-300"
+        : "group relative aspect-[4/5] bg-slate-800 rounded-xl overflow-hidden shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl";
+
+    return `
+        <div class="${cardClass}">
+            <!-- ✅ Placeholder shown while image loads -->
+            <div class="absolute inset-0 flex items-center justify-center bg-slate-700">
+                <span class="material-symbols-outlined text-slate-500 text-4xl animate-pulse">image</span>
+            </div>
+            <!-- ✅ id used by loadAuthImage to inject blob URL -->
+            <img id="img-${img._id}"
+                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                 src=""
+                 alt="${img.filename}"
+                 onerror="this.src='https://via.placeholder.com/400x500?text=Error'"/>
+
+            <!-- Badges -->
+            <div class="absolute top-3 left-3 flex gap-2">${badges}</div>
+
+            <!-- Score Ring -->
+            <div class="absolute top-3 right-3">
+                <div class="relative size-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/20">
+                    <span class="text-xs font-black text-white">${compositeScore}</span>
+                    <svg class="absolute inset-0 -rotate-90 size-10" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" fill="none" r="16" stroke="rgba(255,255,255,0.1)" stroke-width="2"></circle>
+                        <circle cx="18" cy="18" fill="none" r="16" stroke="${scoreColor}"
+                            stroke-dasharray="${compositeScore}, 100" stroke-width="2"></circle>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Hover Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                <p class="text-white text-xs font-medium truncate mb-3">${img.filename}</p>
+                <button onclick='openModal(${JSON.stringify(img).replace(/'/g, "&#39;")})' 
+                        class="w-full py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-bold rounded-lg transition-colors border border-white/10">
+                    View Details
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// ✅ Open Modal with Image Details
+async function openModal(img) {
+    document.getElementById("modalFilename").textContent = img.filename;
+    document.getElementById("modalImage").src = "";  // clear first
+
+    // ✅ Load decrypted image into modal too
+    await loadAuthImage(img._id, document.getElementById("modalImage"));
+
+    document.getElementById("modalImage").alt = img.filename;
+    document.getElementById("modalTechnical").textContent = parseFloat(img.technical_score || 0).toFixed(2);
+    document.getElementById("modalAesthetic").textContent = parseFloat(img.aesthetic_score || 0).toFixed(2);
+    document.getElementById("modalVerdict").textContent = img.verdict || "No verdict available";
+
+    if (img.is_blurry) {
+        document.getElementById("modalBlurFlag").classList.remove("hidden");
+        document.getElementById("modalBlurFlag").classList.add("flex");
+    } else {
+        document.getElementById("modalBlurFlag").classList.add("hidden");
+    }
+    if (img.is_duplicate) {
+        document.getElementById("modalDupFlag").classList.remove("hidden");
+        document.getElementById("modalDupFlag").classList.add("flex");
+    } else {
+        document.getElementById("modalDupFlag").classList.add("hidden");
+    }
+
+    setBar("barSharpness", "valSharpness", img.sharpness);
+    setBar("barExposure", "valExposure", img.exposure_accuracy);
+    setBar("barNoise", "valNoise", img.noise_control);
+    setBar("barSaturation", "valSaturation", img.saturation_balance);
+    setBar("barContrast", "valContrast", img.contrast_quality);
+
+    renderList("modalStrengths", "strengthsSection", img.strengths, "text-green-400", "check");
+    renderList("modalIssues", "issuesSection", img.issues, "text-red-400", "cancel");
+    renderList("modalSuggestions", "suggestionsSection", img.suggestions, "text-blue-400", "lightbulb");
+
+    document.getElementById("imageModal").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+// ✅ Close Modal
+function closeModal() {
+    // Revoke blob URL to free memory
+    const modalImg = document.getElementById("modalImage");
+    if (modalImg.src.startsWith("blob:")) URL.revokeObjectURL(modalImg.src);
+    modalImg.src = "";
+
+    document.getElementById("imageModal").classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+// ✅ Set Score Bar
+function setBar(barId, valId, value) {
+    const val = Math.round(value || 0);
+    document.getElementById(barId).style.width = `${val}%`;
+    document.getElementById(valId).textContent = val;
+}
+
+// ✅ Render List (strengths, issues, suggestions)
+function renderList(listId, sectionId, items, colorClass, icon) {
+    const list = document.getElementById(listId);
+    const section = document.getElementById(sectionId);
+
+    if (items && items.length > 0) {
+        list.innerHTML = items.map(item => `
+            <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined ${colorClass} text-sm mt-0.5">${icon}</span>
+                <span class="text-slate-300 text-sm">${item}</span>
+            </li>
+        `).join("");
+        section.classList.remove("hidden");
+    } else {
+        section.classList.add("hidden");
+    }
+}
+
+// ✅ Close modal on background click
+document.getElementById("imageModal").addEventListener("click", function(e) {
+    if (e.target === this) closeModal();
+});
+
+// ✅ Toggle Score Info
+function toggleInfo() {
+    const details = document.getElementById("scoreDetails");
+    const toggleText = document.getElementById("toggleText");
+    
+    if (details.classList.contains("hidden")) {
+        details.classList.remove("hidden");
+        toggleText.textContent = "Hide Details";
+    } else {
+        details.classList.add("hidden");
+        toggleText.textContent = "Show Details";
+    }
+}
+
+// ========================================
+// PROFILE DROPDOWN FUNCTIONALITY
+// ========================================
+const profileMenuToggle = document.getElementById("profileMenuToggle");
+const profileDropdown = document.getElementById("profileDropdown");
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (profileMenuToggle && profileDropdown) {
+    profileMenuToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function (e) {
+        if (
+            !profileMenuToggle.contains(e.target) &&
+            !profileDropdown.contains(e.target)
+        ) {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userEmail");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("userName");
+        sessionStorage.removeItem("userEmail");
+        window.location.href = "login.html";
+    });
+}
+</script>
+</body>
+</html>

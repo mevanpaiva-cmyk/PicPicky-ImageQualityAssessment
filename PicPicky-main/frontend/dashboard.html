@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky - Dashboard Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#207fdf",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                },
+                fontFamily: { "display": ["Inter", "sans-serif"] },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+        },
+    }
+</script>
+<style type="text/tailwindcss">
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1;
+    }
+    .gauge-ring {
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dashoffset 1s ease;
+    }
+</style>
+</head>
+
+<body class="bg-background-dark text-slate-200 font-display">
+<div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex flex-col border-r border-white/5 bg-slate-blue-950">
+        <div class="p-6 flex flex-col gap-8">
+            <div class="flex items-center gap-3">
+                <div>
+                    <a href="http://127.0.0.1:5500/frontend/home.html">
+                        <img src="PIC-logo.png" class="h-42 scale-110 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity" alt="PicPicky Logo"/>
+                    </a>
+                </div>
+            </div>
+            <nav class="flex flex-col gap-1.5">
+                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg transition-all" href="dashboard.html">
+                    <span class="material-symbols-outlined fill">dashboard</span>
+                    <span class="text-sm font-semibold">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="upload.html">
+                    <span class="material-symbols-outlined">cloud_upload</span>
+                    <span class="text-sm font-medium">Uploads</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="analysis.html">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="text-sm font-medium">Analysis / Results</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="best-album.html">
+                    <span class="material-symbols-outlined">stars</span>
+                    <span class="text-sm font-medium">Best Album</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="profile.html">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <span class="text-sm font-medium">Profile / Insights</span>
+                </a>
+            </nav>
+        </div>
+        
+        <div class="mt-auto p-6">
+            <div class="relative">
+                <button id="profileMenuToggle" type="button"
+                    class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all text-left">
+                    <div class="w-8 h-8 rounded-full bg-slate-700 border border-white/10 flex items-center justify-center text-white font-bold text-sm" id="avatarInitial"></div>
+                    <div class="flex-1 min-w-0">
+                        <p id="profileName" class="text-xs font-bold text-white truncate"></p>
+                        <p id="profileEmail" class="text-[10px] text-slate-400 truncate"></p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500 text-sm">settings</span>
+                </button>
+                <div id="profileDropdown"
+                    class="hidden absolute bottom-full left-0 mb-2 w-full rounded-xl border border-white/10 bg-slate-blue-900 shadow-xl overflow-hidden z-50">
+                    <a href="profile.html" class="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-base">person</span>
+                        Profile
+                    </a>
+                    <button id="logoutBtn" type="button"
+                        class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-all text-left">
+                        <span class="material-symbols-outlined text-base">logout</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <div class="max-w-[1600px] mx-auto w-full px-8 py-10">
+
+            <div id="loadingState" class="flex flex-col items-center justify-center py-32 text-slate-400">
+                <span class="material-symbols-outlined text-5xl animate-spin mb-4">refresh</span>
+                <p class="text-sm font-medium">Loading dashboard...</p>
+            </div>
+
+            <div id="dashboardContent" class="hidden space-y-8">
+
+                <!-- Top Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
+                    <div class="flex flex-col gap-2">
+                        <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Quality Analysis Overview</h2>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium">Real-time visual performance data from your uploads.</p>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="relative w-48 h-48 flex items-center justify-center">
+                            <svg class="w-full h-full">
+                                <circle class="text-slate-100 dark:text-slate-800" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="8"></circle>
+                                <circle id="gaugeRing" class="gauge-ring" cx="96" cy="96" fill="transparent" r="80" stroke="url(#gradient)" stroke-linecap="round" stroke-width="12" stroke-dasharray="502.4" stroke-dashoffset="502.4"></circle>
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" x2="100%" y1="0%">
+                                        <stop offset="0%" stop-color="#207fdf"></stop>
+                                        <stop offset="100%" stop-color="#60a5fa"></stop>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="globalScore" class="text-5xl font-black tracking-tighter">0</span>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Global Score</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-primary/5 border border-primary/20 rounded-xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="material-symbols-outlined text-primary">psychology</span>
+                            <h4 class="font-bold">Profiling Note</h4>
+                        </div>
+                        <p id="profilingNote" class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Technical & Aesthetic Scores -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold">Technical Quality</h3>
+                            <div class="flex items-center text-sm font-bold px-3 py-1 rounded-full" id="techBadge">
+                                <span class="material-symbols-outlined text-base mr-1">trending_up</span>
+                                <span id="techBadgeText">--</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-2 uppercase text-slate-400 tracking-wider">
+                                    <span>Sharpness</span><span id="sharpnessVal">0%</span>
+                                </div>
+                                <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="sharpnessBar" class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-2 uppercase text-slate-400 tracking-wider">
+                                    <span>Exposure Accuracy</span><span id="exposureVal">0%</span>
+                                </div>
+                                <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="exposureBar" class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-2 uppercase text-slate-400 tracking-wider">
+                                    <span>Noise Control</span><span id="noiseVal">0%</span>
+                                </div>
+                                <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="noiseBar" class="h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold">Aesthetic Score</h3>
+                            <div class="flex items-center text-sm font-bold px-3 py-1 rounded-full" id="aestheticBadge">
+                                <span class="material-symbols-outlined text-base mr-1">trending_up</span>
+                                <span id="aestheticBadgeText">--</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-2 uppercase text-slate-400 tracking-wider">
+                                    <span>Average Aesthetic</span><span id="aestheticVal">0%</span>
+                                </div>
+                                <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="aestheticBar" class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-2 uppercase text-slate-400 tracking-wider">
+                                    <span>Average Technical</span><span id="techScoreVal">0%</span>
+                                </div>
+                                <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="techScoreBar" class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Uploads</p>
+                        <h3 id="totalUploads" class="text-3xl font-black mt-2 text-white">0</h3>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Blurry Detected</p>
+                        <div class="flex items-end gap-2">
+                            <h3 id="blurryCount" class="text-3xl font-black mt-2 text-red-400">0</h3>
+                            <span id="blurryPercent" class="text-xs text-red-400 font-bold mb-1.5"></span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Duplicates Found</p>
+                        <div class="flex items-end gap-2">
+                            <h3 id="duplicateCount" class="text-3xl font-black mt-2 text-amber-400">0</h3>
+                            <span id="duplicatePercent" class="text-xs text-amber-400 font-bold mb-1.5"></span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Clean Images</p>
+                        <div class="flex items-end gap-2">
+                            <h3 id="cleanCount" class="text-3xl font-black mt-2 text-green-400">0</h3>
+                            <span id="cleanPercent" class="text-xs text-green-400 font-bold mb-1.5"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Issues + Trend Graph -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <h3 class="text-xl font-bold mb-6">Common Issues Detected</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-4">
+                                <span class="w-24 text-xs font-bold text-slate-500 uppercase">Blurry</span>
+                                <div class="flex-1 h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="issueBlurBar" class="h-full bg-red-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                                <span id="issueBlurVal" class="w-10 text-xs font-bold text-right">0%</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="w-24 text-xs font-bold text-slate-500 uppercase">Duplicates</span>
+                                <div class="flex-1 h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="issueDupBar" class="h-full bg-amber-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                                <span id="issueDupVal" class="w-10 text-xs font-bold text-right">0%</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="w-24 text-xs font-bold text-slate-500 uppercase">Low Quality</span>
+                                <div class="flex-1 h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="issueLowBar" class="h-full bg-orange-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                                <span id="issueLowVal" class="w-10 text-xs font-bold text-right">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold">Quality Trend Over Time</h3>
+                            <span id="trendDirection" class="text-xs font-bold"></span>
+                        </div>
+                        <div class="flex-1 min-h-[200px] w-full relative">
+                            <svg id="trendChart" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 40">
+                                <line x1="0" y1="5" x2="100" y2="5" stroke="#334155" stroke-width="0.15" stroke-dasharray="2"/>
+                                <line x1="0" y1="15" x2="100" y2="15" stroke="#334155" stroke-width="0.15" stroke-dasharray="2"/>
+                                <line x1="0" y1="25" x2="100" y2="25" stroke="#334155" stroke-width="0.15" stroke-dasharray="2"/>
+                                <line x1="0" y1="35" x2="100" y2="35" stroke="#334155" stroke-width="0.15" stroke-dasharray="2"/>
+                                <path id="areaFill" d="" fill="url(#trendGrad)"/>
+                                <path id="trendLine" d="" fill="none" stroke="#207fdf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                                <g id="dataPoints"></g>
+                                <defs>
+                                    <linearGradient id="trendGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#207fdf;stop-opacity:0.3"/>
+                                        <stop offset="100%" style="stop-color:#207fdf;stop-opacity:0"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div id="chartXLabels" class="flex justify-between mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1"></div>
+                        <div class="mt-4 pt-4 border-t border-slate-700 flex items-center gap-2">
+                            <div class="w-3 h-3 bg-primary rounded-full"></div>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase">Average Quality Score</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Uploads -->
+                <div class="bg-white dark:bg-slate-900/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold">Recent Uploads</h3>
+                        <a href="analysis.html" class="text-primary text-xs font-bold hover:underline">View All →</a>
+                    </div>
+                    <div id="recentList" class="space-y-3">
+                        <p class="text-slate-500 text-sm">No recent uploads</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+
+// ✅ Fetch decrypted image with auth token → blob URL
+async function loadAuthImage(imageId, imgElement) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await fetch(`${API_BASE}/image/${imageId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("Failed");
+        const blob = await response.blob();
+        imgElement.src = URL.createObjectURL(blob);
+    } catch (err) {
+        imgElement.src = "https://via.placeholder.com/56?text=IMG";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    const token = localStorage.getItem("token");
+
+    if (!userName || !token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("profileName").textContent = userName;
+    document.getElementById("profileEmail").textContent = userEmail;
+    document.getElementById("avatarInitial").textContent = userName.charAt(0).toUpperCase();
+
+    fetchDashboard(token);
+});
+
+async function fetchDashboard(token) {
+    try {
+        const response = await fetch(`${API_BASE}/dashboard`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+        const data = await response.json();
+        document.getElementById("loadingState").classList.add("hidden");
+        document.getElementById("dashboardContent").classList.remove("hidden");
+        populateDashboard(data);
+    } catch (error) {
+        console.error("Dashboard error:", error);
+        document.getElementById("loadingState").innerHTML = `
+            <span class="material-symbols-outlined text-5xl text-red-400 mb-4">error</span>
+            <p class="text-red-400 text-sm font-medium">Failed to load dashboard. Is the server running?</p>`;
+    }
+}
+
+function populateDashboard(data) {
+    const total = data.total_images || 0;
+    const blurry = data.blurry_images || 0;
+    const duplicates = data.duplicate_images || 0;
+    const clean = Math.max(0, total - blurry - duplicates);
+    const avgTech = data.avg_technical_score || 0;
+    const avgAesthetic = data.avg_aesthetic_score || 0;
+    const avgSharpness = data.avg_sharpness || 0;
+    const avgExposure = data.avg_exposure || 0;
+    const avgNoise = data.avg_noise || 0;
+    const globalScore = Math.round((avgTech * 0.4) + (avgAesthetic * 100 * 0.6));
+
+    document.getElementById("globalScore").textContent = globalScore;
+    const circumference = 2 * Math.PI * 80;
+    const offset = circumference - (circumference * globalScore / 100);
+    setTimeout(() => { document.getElementById("gaugeRing").style.strokeDashoffset = offset; }, 200);
+
+    let note = "";
+    if (globalScore >= 80) note = "Excellent work! Your images consistently show high technical and aesthetic quality. Keep up the professional standard!";
+    else if (globalScore >= 60) note = "Good performance overall. Focus on improving noise control and exposure accuracy to reach the next level.";
+    else if (globalScore >= 40) note = "Room for improvement. Consider using a tripod for sharpness and adjusting exposure settings before shooting.";
+    else note = "Upload more images to build your quality profile. Each upload helps the AI better understand your photography style.";
+    document.getElementById("profilingNote").textContent = note;
+
+    setBar("sharpnessBar", "sharpnessVal", avgSharpness);
+    setBar("exposureBar", "exposureVal", avgExposure);
+    setBar("noiseBar", "noiseVal", avgNoise);
+
+    const noiseBar = document.getElementById("noiseBar");
+    noiseBar.className = avgNoise >= 70
+        ? "h-full bg-primary rounded-full transition-all duration-1000"
+        : "h-full bg-amber-500 rounded-full transition-all duration-1000";
+
+    setBadge("techBadge", "techBadgeText", avgTech);
+    setBar("aestheticBar", "aestheticVal", avgAesthetic * 100);
+    setBar("techScoreBar", "techScoreVal", avgTech);
+    setBadge("aestheticBadge", "aestheticBadgeText", avgAesthetic * 100);
+
+    document.getElementById("totalUploads").textContent = total;
+    document.getElementById("blurryCount").textContent = blurry;
+    document.getElementById("duplicateCount").textContent = duplicates;
+    document.getElementById("cleanCount").textContent = clean;
+
+    if (total > 0) {
+        document.getElementById("blurryPercent").textContent = `(${Math.round(blurry / total * 100)}%)`;
+        document.getElementById("duplicatePercent").textContent = `(${Math.round(duplicates / total * 100)}%)`;
+        document.getElementById("cleanPercent").textContent = `(${Math.round(clean / total * 100)}%)`;
+        setIssueBar("issueBlurBar", "issueBlurVal", Math.round(blurry / total * 100));
+        setIssueBar("issueDupBar", "issueDupVal", Math.round(duplicates / total * 100));
+        setIssueBar("issueLowBar", "issueLowVal", Math.round((total - clean) / total * 100));
+    }
+
+    renderRecentUploads(data.recent_images || []);
+    renderTrendChart(data.recent_images || []);
+}
+
+function setBar(barId, valId, value) {
+    const val = Math.round(value || 0);
+    setTimeout(() => { document.getElementById(barId).style.width = `${val}%`; }, 300);
+    document.getElementById(valId).textContent = `${val}%`;
+}
+
+function setIssueBar(barId, valId, value) {
+    const val = Math.round(value || 0);
+    setTimeout(() => { document.getElementById(barId).style.width = `${val}%`; }, 300);
+    document.getElementById(valId).textContent = `${val}%`;
+}
+
+function setBadge(badgeId, textId, score) {
+    const badge = document.getElementById(badgeId);
+    const text = document.getElementById(textId);
+    if (score >= 70) {
+        badge.className = "text-emerald-500 flex items-center text-sm font-bold bg-emerald-500/10 px-3 py-1 rounded-full";
+        text.textContent = "Good";
+    } else if (score >= 50) {
+        badge.className = "text-amber-500 flex items-center text-sm font-bold bg-amber-500/10 px-3 py-1 rounded-full";
+        text.textContent = "Average";
+    } else {
+        badge.className = "text-red-500 flex items-center text-sm font-bold bg-red-500/10 px-3 py-1 rounded-full";
+        text.textContent = "Needs Work";
+    }
+}
+
+// ✅ Updated: uses loadAuthImage instead of cloudinary_url directly
+function renderRecentUploads(images) {
+    const list = document.getElementById("recentList");
+
+    if (!images || images.length === 0) {
+        list.innerHTML = `
+            <div class="text-center py-8 text-slate-500">
+                <span class="material-symbols-outlined text-4xl mb-2">cloud_upload</span>
+                <p class="text-sm">No uploads yet. <a href="upload.html" class="text-primary hover:underline">Upload now!</a></p>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = images.map(img => {
+        const score = Math.round(((img.technical_score || 0) + (img.aesthetic_score || 0)) / 2);
+        const scoreColor = score >= 75 ? "text-green-400" : score >= 50 ? "text-amber-400" : "text-red-400";
+        const scoreBg = score >= 75 ? "bg-green-500/10" : score >= 50 ? "bg-amber-500/10" : "bg-red-500/10";
+
+        return `
+            <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-800/50 transition-colors">
+                <div class="relative w-14 h-14 rounded-lg overflow-hidden border border-white/10 bg-slate-700 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-slate-500 text-xl animate-pulse absolute">image</span>
+                    <img id="dash-img-${img._id}"
+                         class="w-14 h-14 object-cover relative"
+                         src="" alt="${img.filename}"
+                         onerror="this.src='https://via.placeholder.com/56?text=IMG'"/>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-white truncate">${img.filename}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        ${img.is_blurry ? '<span class="text-[10px] font-bold px-1.5 py-0.5 bg-red-500/10 text-red-400 rounded">Blurry</span>' : ''}
+                        ${img.is_duplicate ? '<span class="text-[10px] font-bold px-1.5 py-0.5 bg-amber-500/10 text-amber-400 rounded">Duplicate</span>' : ''}
+                        ${!img.is_blurry && !img.is_duplicate ? '<span class="text-[10px] font-bold px-1.5 py-0.5 bg-green-500/10 text-green-400 rounded">Clean</span>' : ''}
+                        <span class="text-[10px] text-slate-500">${img.aesthetic_label || ''}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center ${scoreBg} px-4 py-2 rounded-lg shrink-0">
+                    <span class="${scoreColor} text-xl font-black">${score}</span>
+                    <span class="text-[9px] text-slate-500 font-bold uppercase">Score</span>
+                </div>
+            </div>`;
+    }).join("");
+
+    // ✅ Load each recent image after DOM renders
+    images.forEach(img => {
+        const el = document.getElementById(`dash-img-${img._id}`);
+        if (el) loadAuthImage(img._id, el);
+    });
+}
+
+function renderTrendChart(images) {
+    if (!images || images.length === 0) {
+        document.getElementById("chartXLabels").innerHTML = '<span class="text-center w-full">Upload images to see trend</span>';
+        return;
+    }
+
+    const sortedImages = [...images].reverse();
+    const dataPoints = sortedImages.map(img =>
+        Math.round(((img.technical_score || 0) + (img.aesthetic_score || 0)) / 2)
+    );
+    const labels = sortedImages.map((img, i) => `#${i + 1}`);
+
+    const width = 100, height = 40, padding = 5;
+    let linePath = "", areaPath = `M ${padding} ${height - padding}`;
+    const stepX = dataPoints.length > 1 ? (width - 2 * padding) / (dataPoints.length - 1) : 0;
+
+    for (let i = 0; i < dataPoints.length; i++) {
+        const x = padding + i * stepX;
+        const y = height - padding - ((dataPoints[i] / 100) * (height - 2 * padding));
+        linePath += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+        areaPath += ` L ${x} ${y}`;
+    }
+    areaPath += ` L ${width - padding} ${height - padding} Z`;
+
+    setTimeout(() => {
+        document.getElementById("trendLine").setAttribute("d", linePath);
+        document.getElementById("areaFill").setAttribute("d", areaPath);
+    }, 200);
+
+    const group = document.getElementById("dataPoints");
+    group.innerHTML = "";
+    for (let i = 0; i < dataPoints.length; i++) {
+        const x = padding + i * stepX;
+        const y = height - padding - ((dataPoints[i] / 100) * (height - 2 * padding));
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+        circle.setAttribute("r", 1.2); circle.setAttribute("fill", "#207fdf");
+        circle.setAttribute("stroke", "#0f1721"); circle.setAttribute("stroke-width", "0.5");
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = `Image #${i + 1}: ${dataPoints[i]} pts`;
+        circle.appendChild(title);
+        group.appendChild(circle);
+    }
+
+    document.getElementById("chartXLabels").innerHTML = labels.map(l => `<span>${l}</span>`).join("");
+
+    if (dataPoints.length >= 2) {
+        const firstHalf = dataPoints.slice(0, Math.floor(dataPoints.length / 2));
+        const secondHalf = dataPoints.slice(Math.floor(dataPoints.length / 2));
+        const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+        const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+        const directionEl = document.getElementById("trendDirection");
+        if (secondAvg > firstAvg + 2) {
+            directionEl.innerHTML = '<span class="text-green-400 flex items-center gap-1"><span class="material-symbols-outlined text-sm">trending_up</span>Improving</span>';
+        } else if (secondAvg < firstAvg - 2) {
+            directionEl.innerHTML = '<span class="text-red-400 flex items-center gap-1"><span class="material-symbols-outlined text-sm">trending_down</span>Declining</span>';
+        } else {
+            directionEl.innerHTML = '<span class="text-blue-400 flex items-center gap-1"><span class="material-symbols-outlined text-sm">trending_flat</span>Stable</span>';
+        }
+    }
+}
+
+const profileMenuToggle = document.getElementById("profileMenuToggle");
+const profileDropdown = document.getElementById("profileDropdown");
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (profileMenuToggle && profileDropdown) {
+    profileMenuToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("hidden");
+    });
+    document.addEventListener("click", function (e) {
+        if (!profileMenuToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") profileDropdown.classList.add("hidden");
+    });
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+        localStorage.removeItem("token"); localStorage.removeItem("access_token");
+        localStorage.removeItem("user"); localStorage.removeItem("userName");
+        localStorage.removeItem("userEmail"); sessionStorage.removeItem("token");
+        sessionStorage.removeItem("access_token"); sessionStorage.removeItem("user");
+        sessionStorage.removeItem("userName"); sessionStorage.removeItem("userEmail");
+        window.location.href = "login.html";
+    });
+}
+</script>
+</body>
+</html>

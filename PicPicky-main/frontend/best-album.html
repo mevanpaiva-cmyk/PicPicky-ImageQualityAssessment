@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky | Best Album</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#207fdf",
+                    "background-light": "#f6f7f8",
+                    "background-dark": "#111921",
+                },
+                fontFamily: { "display": ["Inter", "sans-serif"] },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+        },
+    }
+</script>
+<style type="text/tailwindcss">
+    body { font-family: 'Inter', sans-serif; }
+    .glass-card {
+        background: rgba(32, 127, 223, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .masonry-item {
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.filled {
+        font-variation-settings: 'FILL' 1, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+</head>
+
+<body class="bg-background-dark text-slate-200 font-display">
+<div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex flex-col border-r border-white/5 bg-slate-blue-950">
+        <div class="p-6 flex flex-col gap-8">
+            <div class="flex items-center gap-3">
+                <div>
+                    <a href="http://127.0.0.1:5500/frontend/home.html">
+                        <img 
+                        src="PIC-logo.png"
+                        class="h-42 scale-110 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                        alt="PicPicky Logo"
+                        />
+                    </a>
+                </div>
+            </div>
+            <nav class="flex flex-col gap-1.5">
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="dashboard.html">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="upload.html">
+                    <span class="material-symbols-outlined">cloud_upload</span>
+                    <span class="text-sm font-medium">Uploads</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="analysis.html">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="text-sm font-medium">Analysis / Results</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg transition-all" href="best-album.html">
+                    <span class="material-symbols-outlined fill">stars</span>
+                    <span class="text-sm font-semibold">Best Album</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="profile.html">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <span class="text-sm font-medium">Profile / Insights</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Profile Section with Dropdown -->
+        <div class="mt-auto p-6">
+            <div class="relative">
+                <button id="profileMenuToggle" type="button"
+                    class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all text-left">
+                    <div class="w-8 h-8 rounded-full bg-slate-700 border border-white/10 flex items-center justify-center text-white font-bold text-sm" id="avatarInitial"></div>
+                    <div class="flex-1 min-w-0">
+                        <p id="profileName" class="text-xs font-bold text-white truncate"></p>
+                        <p id="profileEmail" class="text-[10px] text-slate-400 truncate"></p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500 text-sm">settings</span>
+                </button>
+                <div id="profileDropdown"
+                    class="hidden absolute bottom-full left-0 mb-2 w-full rounded-xl border border-white/10 bg-slate-blue-900 shadow-xl overflow-hidden z-50">
+                    <a href="profile.html" class="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-base">person</span>
+                        Profile
+                    </a>
+                    <button id="logoutBtn" type="button"
+                        class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-all text-left">
+                        <span class="material-symbols-outlined text-base">logout</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <div class="max-w-[1600px] mx-auto w-full px-8 py-10 space-y-10">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined filled text-primary text-3xl">stars</span>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tight text-white">Best Album</h1>
+                        <p id="subtitleText" class="text-slate-400 mt-1">AI-curated excellence</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="flex flex-col items-center justify-center py-24 text-slate-400">
+                <span class="material-symbols-outlined text-5xl animate-spin mb-4">refresh</span>
+                <p class="text-sm font-medium">Loading your best shots...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-24 text-slate-400">
+                <span class="material-symbols-outlined text-6xl mb-4">photo_library</span>
+                <p class="text-lg font-bold text-white mb-2">No images yet!</p>
+                <p class="text-sm mb-6">Upload some photos and your best shots will appear here.</p>
+                <a href="upload.html" class="px-6 py-3 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/80 transition-colors">
+                    Upload Images
+                </a>
+            </div>
+
+            <!-- Album Content -->
+            <div id="albumContent" class="hidden space-y-16">
+
+                <!-- ⭐ Master Selections -->
+                <section>
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-primary"></span>
+                            Master Selections
+                        </h3>
+                        <div class="flex gap-2">
+                            <button id="sortScore" onclick="sortBest('score')" class="text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary font-medium">Top Scoring</button>
+                            <button id="sortDate" onclick="sortBest('date')" class="text-xs px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors text-slate-400">Recent First</button>
+                        </div>
+                    </div>
+                    <div id="bestGrid" class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6"></div>
+                </section>
+
+                <div class="h-px w-full bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+
+                <!-- 📋 Duplicates Detected -->
+                <section id="duplicatesSection" class="hidden">
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="material-symbols-outlined text-slate-400">filter_none</span>
+                        <h2 class="text-2xl font-bold">Duplicates Detected</h2>
+                        <span id="duplicateCount" class="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full font-bold"></span>
+                    </div>
+                    <div id="duplicateGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
+                </section>
+
+                <!-- ⚠️ Blurry / Low Quality -->
+                <section id="blurrySection" class="hidden">
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="material-symbols-outlined text-slate-500">warning</span>
+                        <h2 class="text-2xl font-bold text-slate-400">Blurry or Low-Quality</h2>
+                        <span id="blurryCount" class="bg-slate-700/50 text-slate-400 text-xs px-2 py-1 rounded-full font-bold"></span>
+                    </div>
+                    <div id="blurryGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4"></div>
+                </section>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-16 pt-8 border-t border-primary/5 flex items-center justify-between text-slate-500 text-sm">
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-bold tracking-widest text-slate-600 uppercase">Processing Engine</span>
+                    <span class="font-medium text-primary">PicPicky Intelligence</span>
+                </div>
+                <p>© 2024 PicPicky Professional. All rights reserved.</p>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- Image Detail Modal -->
+<div id="imageModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-white/10">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+            <h3 id="modalFilename" class="text-lg font-bold text-white truncate"></h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-6">
+            <img id="modalImage" src="" alt="" class="w-full h-64 object-cover rounded-xl"/>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-slate-400 text-xs mb-1">Technical Score</p>
+                    <p id="modalTechnical" class="text-3xl font-black text-primary"></p>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-slate-400 text-xs mb-1">Aesthetic Score</p>
+                    <p id="modalAesthetic" class="text-3xl font-black text-amber-400"></p>
+                </div>
+            </div>
+            <div id="modalFlags" class="flex gap-3"></div>
+            <div class="bg-slate-800 rounded-xl p-4">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Verdict</p>
+                <p id="modalVerdict" class="text-white text-sm"></p>
+            </div>
+            <div class="space-y-3">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Detailed Breakdown</p>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Sharpness</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barSharpness" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valSharpness" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Exposure</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barExposure" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valExposure" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Noise Control</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barNoise" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valNoise" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Saturation</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barSaturation" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valSaturation" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-300 text-sm">Contrast</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                <div id="barContrast" class="h-full bg-primary rounded-full"></div>
+                            </div>
+                            <span id="valContrast" class="text-white text-xs font-bold w-8 text-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="strengthsSection" class="hidden">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Strengths</p>
+                <ul id="modalStrengths" class="space-y-1"></ul>
+            </div>
+            <div id="issuesSection" class="hidden">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Issues</p>
+                <ul id="modalIssues" class="space-y-1"></ul>
+            </div>
+            <div id="suggestionsSection" class="hidden">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Suggestions</p>
+                <ul id="modalSuggestions" class="space-y-1"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+let allImages = [];
+let bestImages = [];
+let duplicateImages = [];
+let blurryImages = [];
+let currentSort = 'score';
+
+// ✅ Fetch decrypted image with auth token → blob URL
+async function loadAuthImage(imageId, imgElement) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await fetch(`${API_BASE}/image/${imageId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error("Failed");
+        const blob = await response.blob();
+        imgElement.src = URL.createObjectURL(blob);
+    } catch (err) {
+        imgElement.src = "https://via.placeholder.com/400x500?text=Error";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    const token = localStorage.getItem("token");
+
+    if (!userName || !token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("profileName").textContent = userName;
+    document.getElementById("profileEmail").textContent = userEmail;
+    document.getElementById("avatarInitial").textContent = userName.charAt(0).toUpperCase();
+
+    fetchBestAlbum(token);
+});
+
+async function fetchBestAlbum(token) {
+    try {
+        const response = await fetch(`${API_BASE}/best-album`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const data = await response.json();
+        allImages = data.images || [];
+
+        document.getElementById("loadingState").classList.add("hidden");
+
+        if (allImages.length === 0) {
+            document.getElementById("emptyState").classList.remove("hidden");
+            return;
+        }
+
+        bestImages = allImages.filter(img => !img.is_blurry && !img.is_duplicate && (img.technical_score || 0) > 80 && (img.aesthetic_score || 0) > 0.6);
+        duplicateImages = allImages.filter(img => img.is_duplicate === true);
+        blurryImages = allImages.filter(img => img.is_blurry === true);
+
+        document.getElementById("albumContent").classList.remove("hidden");
+        document.getElementById("subtitleText").textContent =
+            `${bestImages.length} best shots from ${allImages.length} total images`;
+
+        renderBestImages();
+        renderDuplicates();
+        renderBlurry();
+
+    } catch (error) {
+        console.error("Best album error:", error);
+        document.getElementById("loadingState").innerHTML = `
+            <span class="material-symbols-outlined text-5xl text-red-400 mb-4">error</span>
+            <p class="text-red-400 text-sm font-medium">Failed to load. Is the server running?</p>
+        `;
+    }
+}
+
+function sortBest(type) {
+    currentSort = type;
+    document.getElementById("sortScore").className = type === 'score'
+        ? "text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary font-medium"
+        : "text-xs px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors text-slate-400";
+    document.getElementById("sortDate").className = type === 'date'
+        ? "text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary font-medium"
+        : "text-xs px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors text-slate-400";
+    renderBestImages();
+}
+
+function renderBestImages() {
+    const grid = document.getElementById("bestGrid");
+
+    let sorted = [...bestImages];
+    if (currentSort === 'score') {
+        sorted.sort((a, b) => b.aesthetic_score - a.aesthetic_score);
+    } else {
+        sorted.sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+    }
+
+    if (sorted.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full text-center py-12 text-slate-500">
+                <span class="material-symbols-outlined text-4xl mb-2">photo_library</span>
+                <p class="text-sm">No best shots yet. Upload high quality images!</p>
+            </div>`;
+        return;
+    }
+
+    grid.innerHTML = sorted.map((img, index) => {
+        const score = parseFloat(img.aesthetic_score || 0).toFixed(2);
+        const rank = index + 1;
+        let rankBadge = "";
+        if (rank === 1) {
+            rankBadge = `<div class="absolute top-4 left-4 bg-yellow-500 text-white px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px] filled">emoji_events</span> #1 Best
+            </div>`;
+        } else if (rank <= 3) {
+            rankBadge = `<div class="absolute top-4 left-4 bg-primary/80 text-white px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase">#${rank}</div>`;
+        }
+
+        return `
+            <div class="masonry-item group relative rounded-xl overflow-hidden border border-white/5 bg-slate-900 cursor-pointer"
+                 onclick='openModal(${JSON.stringify(img).replace(/'/g, "&#39;")})'>
+                <div class="absolute inset-0 flex items-center justify-center bg-slate-800">
+                    <span class="material-symbols-outlined text-slate-600 text-4xl animate-pulse">image</span>
+                </div>
+                <img id="img-best-${img._id}"
+                     class="w-full group-hover:scale-105 transition-transform duration-500 relative"
+                     src="" alt="${img.filename}"
+                     onerror="this.src='https://via.placeholder.com/400x500?text=Error'"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <p class="text-white text-xs font-medium truncate mb-1">${img.filename}</p>
+                        <p class="text-slate-400 text-[10px]">${img.aesthetic_label || ''}</p>
+                    </div>
+                </div>
+                ${rankBadge}
+                <div class="absolute top-4 right-4 bg-yellow-500/90 text-white px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] filled">grade</span> ${score}
+                </div>
+            </div>`;
+    }).join("");
+
+    // ✅ Load images after DOM renders
+    sorted.forEach(img => {
+        const el = document.getElementById(`img-best-${img._id}`);
+        if (el) loadAuthImage(img._id, el);
+    });
+}
+
+function renderDuplicates() {
+    if (duplicateImages.length === 0) return;
+    document.getElementById("duplicatesSection").classList.remove("hidden");
+    document.getElementById("duplicateCount").textContent = `${duplicateImages.length} Found`;
+
+    const grid = document.getElementById("duplicateGrid");
+    grid.innerHTML = duplicateImages.map(img => {
+        const score = parseFloat(img.aesthetic_score || 0).toFixed(2);
+        return `
+            <div class="group relative aspect-[4/5] rounded-xl overflow-hidden bg-slate-800/50 border border-slate-800 hover:border-primary/30 transition-colors opacity-70 hover:opacity-100 grayscale hover:grayscale-0 cursor-pointer"
+                 onclick='openModal(${JSON.stringify(img).replace(/'/g, "&#39;")})'>
+                <div class="absolute inset-0 flex items-center justify-center bg-slate-800">
+                    <span class="material-symbols-outlined text-slate-600 text-3xl animate-pulse">image</span>
+                </div>
+                <img id="img-dup-${img._id}"
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                     src="" alt="${img.filename}"
+                     onerror="this.src='https://via.placeholder.com/400x500?text=Error'"/>
+                <div class="absolute top-3 left-3">
+                    <div class="bg-white/10 backdrop-blur-md p-1.5 rounded-lg border border-white/20">
+                        <span class="material-symbols-outlined text-white text-sm">content_copy</span>
+                    </div>
+                </div>
+                <div class="absolute top-3 right-3 bg-primary/80 text-white px-2 py-1 rounded-md text-[10px] font-bold">${score}</div>
+                <div class="absolute inset-0 flex flex-col items-center justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="w-full bg-slate-900/90 rounded-lg p-2 backdrop-blur-sm">
+                        <span class="text-[10px] text-primary font-bold block">DUPLICATE</span>
+                        <span class="text-xs text-white truncate block">${img.filename}</span>
+                        ${img.duplicate_of ? `<span class="text-[10px] text-slate-400">of: ${img.duplicate_of}</span>` : ''}
+                    </div>
+                </div>
+            </div>`;
+    }).join("");
+
+    // ✅ Load duplicate images
+    duplicateImages.forEach(img => {
+        const el = document.getElementById(`img-dup-${img._id}`);
+        if (el) loadAuthImage(img._id, el);
+    });
+}
+
+function renderBlurry() {
+    if (blurryImages.length === 0) return;
+    document.getElementById("blurrySection").classList.remove("hidden");
+    document.getElementById("blurryCount").textContent = `${blurryImages.length} Flags`;
+
+    const grid = document.getElementById("blurryGrid");
+    grid.innerHTML = blurryImages.map(img => {
+        const issue = img.blur_score < 50 ? "Motion Blur" :
+                      img.sharpness < 50 ? "Low Sharpness" :
+                      img.exposure_accuracy < 50 ? "Exposure Issue" :
+                      img.noise_control < 50 ? "High Noise" : "Quality Issue";
+        return `
+            <div class="group relative aspect-[4/5] rounded-xl overflow-hidden bg-slate-800/50 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                 onclick='openModal(${JSON.stringify(img).replace(/'/g, "&#39;")})'>
+                <div class="absolute inset-0 flex items-center justify-center bg-slate-800">
+                    <span class="material-symbols-outlined text-slate-600 text-3xl animate-pulse">image</span>
+                </div>
+                <img id="img-blur-${img._id}"
+                     class="absolute inset-0 w-full h-full object-cover opacity-50 blur-[2px] group-hover:blur-0 group-hover:opacity-100 transition-all duration-300"
+                     src="" alt="${img.filename}"
+                     onerror="this.src='https://via.placeholder.com/400x500?text=Error'"/>
+                <div class="absolute inset-0 flex flex-col items-center justify-end p-4">
+                    <div class="w-full bg-slate-900/90 rounded-lg p-2 backdrop-blur-sm">
+                        <span class="text-[10px] text-slate-400 font-bold tracking-tight block">ISSUE DETECTED</span>
+                        <span class="text-xs text-white">${issue}</span>
+                    </div>
+                </div>
+            </div>`;
+    }).join("");
+
+    // ✅ Load blurry images
+    blurryImages.forEach(img => {
+        const el = document.getElementById(`img-blur-${img._id}`);
+        if (el) loadAuthImage(img._id, el);
+    });
+}
+
+// ✅ Open Modal
+async function openModal(img) {
+    document.getElementById("modalFilename").textContent = img.filename;
+    document.getElementById("modalImage").src = "";
+    await loadAuthImage(img._id, document.getElementById("modalImage"));
+    document.getElementById("modalTechnical").textContent = parseFloat(img.technical_score || 0).toFixed(2);
+    document.getElementById("modalAesthetic").textContent = parseFloat(img.aesthetic_score || 0).toFixed(2);
+    document.getElementById("modalVerdict").textContent = img.verdict || "No verdict available";
+
+    let flags = "";
+    if (img.is_blurry) flags += `<div class="flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <span class="material-symbols-outlined text-red-400 text-sm">blur_on</span>
+        <span class="text-red-400 text-xs font-bold">Blurry</span></div>`;
+    if (img.is_duplicate) flags += `<div class="flex items-center gap-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+        <span class="material-symbols-outlined text-yellow-400 text-sm">content_copy</span>
+        <span class="text-yellow-400 text-xs font-bold">Duplicate</span></div>`;
+    if (!img.is_blurry && !img.is_duplicate) flags += `<div class="flex items-center gap-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+        <span class="material-symbols-outlined text-green-400 text-sm">check_circle</span>
+        <span class="text-green-400 text-xs font-bold">Clean</span></div>`;
+    document.getElementById("modalFlags").innerHTML = flags;
+
+    setBar("barSharpness", "valSharpness", img.sharpness);
+    setBar("barExposure", "valExposure", img.exposure_accuracy);
+    setBar("barNoise", "valNoise", img.noise_control);
+    setBar("barSaturation", "valSaturation", img.saturation_balance);
+    setBar("barContrast", "valContrast", img.contrast_quality);
+
+    renderList("modalStrengths", "strengthsSection", img.strengths, "text-green-400", "check");
+    renderList("modalIssues", "issuesSection", img.issues, "text-red-400", "cancel");
+    renderList("modalSuggestions", "suggestionsSection", img.suggestions, "text-blue-400", "lightbulb");
+
+    document.getElementById("imageModal").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+    const modalImg = document.getElementById("modalImage");
+    if (modalImg.src.startsWith("blob:")) URL.revokeObjectURL(modalImg.src);
+    modalImg.src = "";
+    document.getElementById("imageModal").classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+function setBar(barId, valId, value) {
+    const val = Math.round(value || 0);
+    document.getElementById(barId).style.width = `${val}%`;
+    document.getElementById(valId).textContent = val;
+}
+
+function renderList(listId, sectionId, items, colorClass, icon) {
+    const list = document.getElementById(listId);
+    const section = document.getElementById(sectionId);
+    if (items && items.length > 0) {
+        list.innerHTML = items.map(item => `
+            <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined ${colorClass} text-sm mt-0.5">${icon}</span>
+                <span class="text-slate-300 text-sm">${item}</span>
+            </li>`).join("");
+        section.classList.remove("hidden");
+    } else {
+        section.classList.add("hidden");
+    }
+}
+
+document.getElementById("imageModal").addEventListener("click", function(e) {
+    if (e.target === this) closeModal();
+});
+
+const profileMenuToggle = document.getElementById("profileMenuToggle");
+const profileDropdown = document.getElementById("profileDropdown");
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (profileMenuToggle && profileDropdown) {
+    profileMenuToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("hidden");
+    });
+    document.addEventListener("click", function (e) {
+        if (!profileMenuToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") profileDropdown.classList.add("hidden");
+    });
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+        localStorage.removeItem("token"); localStorage.removeItem("access_token");
+        localStorage.removeItem("user"); localStorage.removeItem("userName");
+        localStorage.removeItem("userEmail"); sessionStorage.removeItem("token");
+        sessionStorage.removeItem("access_token"); sessionStorage.removeItem("user");
+        sessionStorage.removeItem("userName"); sessionStorage.removeItem("userEmail");
+        window.location.href = "login.html";
+    });
+}
+</script>
+</body>
+</html>

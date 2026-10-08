@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicPicky — Image Quality Assessment</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#207fdf",
+                        "primary-dark": "#1a6bbf",
+                        "background-dark": "#0a1628",
+                        "surface": "#111921",
+                        "surface-2": "#162032",
+                        "surface-3": "#1e2d42",
+                        "accent": "#38bdf8",
+                        "accent-2": "#818cf8",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    animation: {
+                        "float": "float 6s ease-in-out infinite",
+                        "float-delay": "float 6s ease-in-out 2s infinite",
+                        "float-delay-2": "float 6s ease-in-out 4s infinite",
+                        "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                        "slide-up": "slideUp 0.8s ease forwards",
+                        "fade-in": "fadeIn 1s ease forwards",
+                        "spin-slow": "spin 20s linear infinite",
+                        "gradient": "gradient 8s ease infinite",
+                    },
+                    keyframes: {
+                        float: {
+                            "0%, 100%": { transform: "translateY(0px)" },
+                            "50%": { transform: "translateY(-20px)" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(60px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        },
+                        fadeIn: {
+                            "0%": { opacity: "0" },
+                            "100%": { opacity: "1" },
+                        },
+                        gradient: {
+                            "0%, 100%": { backgroundPosition: "0% 50%" },
+                            "50%": { backgroundPosition: "100% 50%" },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { 
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            background-color: #0a1628;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a1628; }
+        ::-webkit-scrollbar-thumb { background: #207fdf; border-radius: 10px; }
+
+        /* ── Gradient Text ── */
+        .gradient-text {
+            background: linear-gradient(135deg, #207fdf, #38bdf8, #818cf8);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 4s ease infinite;
+        }
+
+        /* ── Hero Background ── */
+        .hero-bg {
+            background: radial-gradient(ellipse at 20% 50%, rgba(32, 127, 223, 0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(129, 140, 248, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 60% 80%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
+        }
+
+        /* ── Glass Card ── */
+        .glass {
+            background: rgba(22, 32, 50, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(32, 127, 223, 0.15);
+        }
+
+        .glass:hover {
+            border-color: rgba(32, 127, 223, 0.4);
+            transform: translateY(-4px);
+            transition: all 0.3s ease;
+        }
+
+        /* ── Feature Card Glow ── */
+        .feature-card:hover .card-icon {
+            box-shadow: 0 0 30px rgba(32, 127, 223, 0.5);
+        }
+
+        /* ── Animated Grid ── */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(32, 127, 223, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(32, 127, 223, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* ── Orbit Animation ── */
+        .orbit {
+            animation: orbit 15s linear infinite;
+        }
+        .orbit-2 {
+            animation: orbit 25s linear infinite reverse;
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+
+        /* ── Reveal on Scroll ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Navbar ── */
+        .navbar-blur {
+            background: rgba(10, 22, 40, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(32, 127, 223, 0.1);
+        }
+
+        /* ── Glow Button ── */
+        .glow-btn {
+            background: linear-gradient(135deg, #207fdf, #1a6bbf);
+            box-shadow: 0 0 20px rgba(32, 127, 223, 0.4);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 40px rgba(32, 127, 223, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* ── Pipeline Step ── */
+        .pipeline-step {
+            position: relative;
+        }
+
+        /* ── Shimmer ── */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(32, 127, 223, 0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+
+        /* ── Particle ── */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor {
+            animation: blink 1s step-end infinite;
+        }
+
+        /* ── Full Width Section ── */
+        .full-section {
+            width: 100vw;
+            position: relative;
+            left: 0;
+            right: 0;
+        }
+
+        /* ── Inner Container ── */
+        .inner {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .inner {
+                padding: 0 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-white">
+
+<!-- ── Navbar ── -->
+<nav class="fixed top-0 left-0 right-0 w-full z-50 navbar-blur">
+    <div class="inner py-5 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+            <img src="PIC-logo.png" class="h-20 w-auto object-contain" alt="PicPicky Logo">
+        </div>
+
+        <!-- Nav Links -->
+        <div class="hidden md:flex items-center gap-10">
+            <a href="#features" class="text-slate-400 hover:text-white transition-colors text-lg font-medium">Features</a>
+            <a href="#how-it-works" class="text-slate-400 hover:text-white transition-colors text-lg font-medium">How It Works</a>
+            <a href="#pipeline" class="text-slate-400 hover:text-white transition-colors text-lg font-medium">ML Pipeline</a>
+            <a href="#use-cases" class="text-slate-400 hover:text-white transition-colors text-lg font-medium">Use Cases</a>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="flex items-center gap-4">
+            <a href="http://127.0.0.1:5500/frontend/login.html" class="text-lg font-medium text-slate-300 hover:text-white transition-colors px-5 py-2.5">
+                Sign In
+            </a>
+            <a href="http://127.0.0.1:5500/frontend/register.html" class="glow-btn text-lg font-bold text-white px-6 py-3 rounded-lg">
+                Get Started
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Hero Section ── -->
+<section class="full-section relative min-h-screen flex items-center justify-center hero-bg grid-bg pt-24 overflow-hidden">
+
+    <!-- Floating Particles -->
+    <div class="particle w-2 h-2 bg-primary/40 top-1/4 left-1/5" style="animation-delay: 0s;"></div>
+    <div class="particle w-3 h-3 bg-accent/30 top-1/3 right-1/4" style="animation-delay: 2s;"></div>
+    <div class="particle w-1.5 h-1.5 bg-accent-2/40 bottom-1/3 left-1/3" style="animation-delay: 4s;"></div>
+    <div class="particle w-2.5 h-2.5 bg-primary/20 top-2/3 right-1/3" style="animation-delay: 1s;"></div>
+
+    <!-- Glow Orbs -->
+    <div class="absolute top-20 left-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-20 right-0 w-[400px] h-[400px] bg-accent-2/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="inner py-20 flex flex-col lg:flex-row items-center gap-16">
+
+        <!-- Left Content -->
+        <div class="flex-1 space-y-8 text-center lg:text-left">
+
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium">
+                <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                AI-Powered Image Quality Assessment
+            </div>
+
+            <!-- Heading -->
+            <h1 class="text-5xl md:text-6xl xl:text-7xl font-black leading-tight tracking-tight">
+                The Precision Eye<br>
+                for <span class="gradient-text">Every Shot</span>
+            </h1>
+
+            <!-- Typewriter Subtitle -->
+            <p class="text-slate-400 text-xl max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                PicPicky analyzes your photos for
+                <span id="typewriter" class="text-accent font-semibold"></span>
+                <span class="cursor text-accent">|</span>
+                <br>and builds your photographer profile automatically.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a href="http://127.0.0.1:5500/frontend/login.html" class="glow-btn px-8 py-4 rounded-xl font-bold text-white text-lg flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">rocket_launch</span>
+                    Start Analyzing
+                </a>
+                <a href="#how-it-works" class="px-8 py-4 rounded-xl font-bold text-slate-300 text-lg border border-slate-700 hover:border-primary/50 hover:text-white transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">play_circle</span>
+                    See How It Works
+                </a>
+            </div>
+
+            <!-- Mini Stats -->
+            <div class="flex flex-wrap gap-8 justify-center lg:justify-start pt-4">
+                <div class="text-center lg:text-left">
+                    <p class="text-3xl font-black text-white">5+</p>
+                    <p class="text-slate-400 text-sm">Quality Metrics</p>
+                </div>
+                <div class="w-px bg-slate-700"></div>
+                <div class="text-center lg:text-left">
+                    <p class="text-3xl font-black text-white">AI</p>
+                    <p class="text-slate-400 text-sm">Powered Scoring</p>
+                </div>
+                <div class="w-px bg-slate-700"></div>
+                <div class="text-center lg:text-left">
+                    <p class="text-3xl font-black text-white">100%</p>
+                    <p class="text-slate-400 text-sm">Cloud Based</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Visual -->
+        <div class="flex-1 flex items-center justify-center relative">
+
+            <!-- Orbit Rings -->
+            <div class="absolute w-80 h-80 border border-primary/10 rounded-full"></div>
+            <div class="absolute w-96 h-96 border border-primary/5 rounded-full"></div>
+
+            <!-- Orbiting Icons -->
+            <div class="absolute w-80 h-80 flex items-center justify-center">
+                <div class="orbit absolute">
+                    <div class="w-10 h-10 bg-surface-3 border border-primary/30 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-outlined text-primary text-lg">blur_on</span>
+                    </div>
+                </div>
+                <div class="orbit-2 absolute" style="animation-duration: 20s">
+                    <div class="w-10 h-10 bg-surface-3 border border-accent/30 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-outlined text-accent text-lg">copy_all</span>
+                    </div>
+                </div>
+                <div class="orbit absolute" style="animation-duration: 18s; animation-delay: -6s">
+                    <div class="w-10 h-10 bg-surface-3 border border-accent-2/30 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-outlined text-accent-2 text-lg">analytics</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Card -->
+            <div class="glass rounded-3xl p-8 w-96 relative z-10 shimmer">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary text-2xl">photo_camera</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-white">Image Analysis</p>
+                        <p class="text-slate-400 text-xs">Processing complete</p>
+                    </div>
+                    <div class="ml-auto w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                </div>
+
+                <!-- Score Bars -->
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Sharpness</span>
+                            <span class="text-green-400 font-bold">92%</span>
+                        </div>
+                        <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-primary to-accent rounded-full score-bar" style="width: 0%" data-width="92%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Exposure</span>
+                            <span class="text-yellow-400 font-bold">78%</span>
+                        </div>
+                        <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full score-bar" style="width: 0%" data-width="78%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Aesthetic Score</span>
+                            <span class="text-accent font-bold">88%</span>
+                        </div>
+                        <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-accent to-accent-2 rounded-full score-bar" style="width: 0%" data-width="88%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Color Balance</span>
+                            <span class="text-accent-2 font-bold">95%</span>
+                        </div>
+                        <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-accent-2 to-primary rounded-full score-bar" style="width: 0%" data-width="95%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overall Score -->
+                <div class="mt-6 pt-4 border-t border-slate-700/50 flex items-center justify-between">
+                    <span class="text-slate-400 text-sm">Overall Score</span>
+                    <span class="text-2xl font-black gradient-text">88.3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 text-xs">
+        <span>Scroll to explore</span>
+        <div class="w-5 h-8 border border-slate-600 rounded-full flex items-start justify-center p-1">
+            <div class="w-1 h-2 bg-primary rounded-full animate-bounce"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Features Section ── -->
+<section id="features" class="full-section py-32 relative">
+    <div class="absolute inset-0 grid-bg opacity-50"></div>
+    <div class="inner relative">
+
+        <!-- Section Header -->
+        <div class="text-center mb-20 reveal">
+            <span class="text-primary text-sm font-bold uppercase tracking-widest">What PicPicky Does</span>
+            <h2 class="text-4xl md:text-5xl font-black mt-3 mb-4">
+                Every Metric That <span class="gradient-text">Matters</span>
+            </h2>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                A complete suite of AI-powered tools that evaluate your images from every angle — technical, aesthetic, and beyond.
+            </p>
+        </div>
+
+        <!-- Feature Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Blur Detection -->
+            <div class="glass rounded-2xl p-8 feature-card reveal cursor-default">
+                <div class="card-icon w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300">
+                    <span class="material-symbols-outlined text-blue-400 text-3xl">blur_on</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Blur Detection</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Flags out-of-focus images using Laplacian variance analysis. Never submit a blurry shot again — our system catches what the eye misses.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-blue-400 text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    Laplacian Variance Analysis
+                </div>
+            </div>
+
+            <!-- Duplicate Detection -->
+            <div class="glass rounded-2xl p-8 feature-card reveal cursor-default" style="transition-delay: 0.1s">
+                <div class="card-icon w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300">
+                    <span class="material-symbols-outlined text-purple-400 text-3xl">copy_all</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Duplicate Detection</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Identifies near-duplicate images using perceptual hashing. Keeps your portfolio clean and unique, automatically.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-purple-400 text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    Perceptual Hashing
+                </div>
+            </div>
+
+            <!-- Technical Quality -->
+            <div class="glass rounded-2xl p-8 feature-card reveal cursor-default" style="transition-delay: 0.2s">
+                <div class="card-icon w-14 h-14 bg-cyan-500/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300">
+                    <span class="material-symbols-outlined text-cyan-400 text-3xl">analytics</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Technical Quality</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Evaluates exposure, noise, sharpness, and color balance. Get a full technical breakdown of every image you submit.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-cyan-400 text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    4 Technical Metrics
+                </div>
+            </div>
+
+            <!-- Aesthetic Scoring -->
+            <div class="glass rounded-2xl p-8 feature-card reveal cursor-default" style="transition-delay: 0.3s">
+                <div class="card-icon w-14 h-14 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300">
+                    <span class="material-symbols-outlined text-pink-400 text-3xl">auto_awesome</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Aesthetic Scoring</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Rates images using the MANIQA deep learning model (CLIP-IQA based). AI sees beauty the way humans do.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-pink-400 text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    CLIP-IQA Deep Learning
+                </div>
+            </div>
+
+            <!-- Photographer Profiling -->
+            <div class="glass rounded-2xl p-8 feature-card reveal cursor-default" style="transition-delay: 0.4s">
+                <div class="card-icon w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300">
+                    <span class="material-symbols-outlined text-amber-400 text-3xl">person_check</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Photographer Profiling</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Tracks submission quality over time and builds a profile score. Watch your skills grow with every upload.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-amber-400 text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    Progress Tracking
+                </div>
+            </div>
+
+            <!-- Cloud Storage -->
+            <div class="glass rounded-2xl p-8 feature-card reveal cursor-default" style="transition-delay: 0.5s">
+                <div class="card-icon w-14 h-14 bg-green-500/20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300">
+                    <span class="material-symbols-outlined text-green-400 text-3xl">cloud_upload</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Cloud Storage</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Cloudinary integration for seamless cloud-based image storage and delivery. Your images, everywhere, always.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-green-400 text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    Cloudinary Powered
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── How It Works ── -->
+<section id="how-it-works" class="full-section py-32" style="background: rgba(22, 32, 50, 0.5);">
+    <div class="inner">
+
+        <div class="text-center mb-20 reveal">
+            <span class="text-primary text-sm font-bold uppercase tracking-widest">Simple 3 Steps</span>
+            <h2 class="text-4xl md:text-5xl font-black mt-3 mb-4">
+                How <span class="gradient-text">PicPicky</span> Works
+            </h2>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                From upload to insight in seconds. No technical knowledge required.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+
+            <!-- Connecting Line -->
+            <div class="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary via-accent to-accent-2 opacity-30"></div>
+
+            <!-- Step 1 -->
+            <div class="text-center reveal">
+                <div class="relative inline-block mb-8">
+                    <div class="w-32 h-32 bg-primary/10 border-2 border-primary/30 rounded-3xl flex items-center justify-center mx-auto">
+                        <span class="material-symbols-outlined text-primary text-5xl">cloud_upload</span>
+                    </div>
+                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-black text-sm">1</div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Upload Your Photo</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Simply drag and drop or select your image. PicPicky accepts all standard photography formats and gets to work instantly.
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="text-center reveal" style="transition-delay: 0.2s">
+                <div class="relative inline-block mb-8">
+                    <div class="w-32 h-32 bg-accent/10 border-2 border-accent/30 rounded-3xl flex items-center justify-center mx-auto">
+                        <span class="material-symbols-outlined text-accent text-5xl">psychology</span>
+                    </div>
+                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white font-black text-sm">2</div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">AI Analyzes It</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Our ML pipeline runs blur detection, duplicate checks, technical analysis, and aesthetic scoring — all in seconds.
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="text-center reveal" style="transition-delay: 0.4s">
+                <div class="relative inline-block mb-8">
+                    <div class="w-32 h-32 bg-accent-2/10 border-2 border-accent-2/30 rounded-3xl flex items-center justify-center mx-auto">
+                        <span class="material-symbols-outlined text-accent-2 text-5xl">insights</span>
+                    </div>
+                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-accent-2 rounded-full flex items-center justify-center text-white font-black text-sm">3</div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Get Your Results</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Receive a detailed quality report, scores, and recommendations. Your photographer profile updates automatically.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── ML Pipeline Section ── -->
+<section id="pipeline" class="full-section py-32 relative overflow-hidden">
+    <div class="absolute inset-0 grid-bg opacity-30"></div>
+    <div class="absolute right-0 top-0 w-96 h-96 bg-primary/5 blur-3xl rounded-full"></div>
+
+    <div class="inner relative">
+        <div class="text-center mb-20 reveal">
+            <span class="text-primary text-sm font-bold uppercase tracking-widest">Under the Hood</span>
+            <h2 class="text-4xl md:text-5xl font-black mt-3 mb-4">
+                The <span class="gradient-text">ML Pipeline</span>
+            </h2>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                A sophisticated multi-stage pipeline that ensures only the best images make it through.
+            </p>
+        </div>
+
+        <div class="flex flex-col items-center gap-6 max-w-2xl mx-auto">
+
+            <!-- Pipeline Step 1 -->
+            <div class="pipeline-step w-full glass rounded-2xl p-6 flex items-center gap-4 reveal">
+                <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-blue-400">upload</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white">Image Upload</p>
+                    <p class="text-slate-400 text-sm">Image received and stored securely via Cloudinary</p>
+                </div>
+                <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <span class="text-blue-400 text-xs font-bold">1</span>
+                </div>
+            </div>
+
+            <div class="w-0.5 h-6 bg-gradient-to-b from-blue-400 to-red-400"></div>
+
+            <!-- Pipeline Step 2 -->
+            <div class="pipeline-step w-full glass rounded-2xl p-6 flex items-center gap-4 reveal" style="transition-delay: 0.1s">
+                <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-red-400">blur_on</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white">Blur Detection</p>
+                    <p class="text-slate-400 text-sm">Blurry images flagged and rejected immediately</p>
+                </div>
+                <div class="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <span class="text-red-400 text-xs font-bold">2</span>
+                </div>
+            </div>
+
+            <div class="w-0.5 h-6 bg-gradient-to-b from-red-400 to-purple-400"></div>
+
+            <!-- Pipeline Step 3 -->
+            <div class="pipeline-step w-full glass rounded-2xl p-6 flex items-center gap-4 reveal" style="transition-delay: 0.2s">
+                <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-purple-400">copy_all</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white">Duplicate Check</p>
+                    <p class="text-slate-400 text-sm">Perceptual hashing filters near-duplicate images</p>
+                </div>
+                <div class="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
+                    <span class="text-purple-400 text-xs font-bold">3</span>
+                </div>
+            </div>
+
+            <div class="w-0.5 h-6 bg-gradient-to-b from-purple-400 to-cyan-400"></div>
+
+            <!-- Pipeline Step 4 -->
+            <div class="pipeline-step w-full glass rounded-2xl p-6 flex items-center gap-4 reveal" style="transition-delay: 0.3s">
+                <div class="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-cyan-400">tune</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white">Technical Analysis</p>
+                    <p class="text-slate-400 text-sm">Exposure · Noise · Sharpness · Color Balance scored</p>
+                </div>
+                <div class="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                    <span class="text-cyan-400 text-xs font-bold">4</span>
+                </div>
+            </div>
+
+            <div class="w-0.5 h-6 bg-gradient-to-b from-cyan-400 to-pink-400"></div>
+
+            <!-- Pipeline Step 5 -->
+            <div class="pipeline-step w-full glass rounded-2xl p-6 flex items-center gap-4 reveal" style="transition-delay: 0.4s">
+                <div class="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-pink-400">auto_awesome</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white">Aesthetic Score</p>
+                    <p class="text-slate-400 text-sm">CLIP-IQA model rates visual beauty and composition</p>
+                </div>
+                <div class="w-8 h-8 bg-pink-500/20 rounded-full flex items-center justify-center">
+                    <span class="text-pink-400 text-xs font-bold">5</span>
+                </div>
+            </div>
+
+            <div class="w-0.5 h-6 bg-gradient-to-b from-pink-400 to-green-400"></div>
+
+            <!-- Pipeline Step 6 -->
+            <div class="pipeline-step w-full glass rounded-2xl p-6 flex items-center gap-4 reveal" style="transition-delay: 0.5s">
+                <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-green-400">person_check</span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white">Profile Update</p>
+                    <p class="text-slate-400 text-sm">Composite score updates your photographer profile</p>
+                </div>
+                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <span class="text-green-400 text-xs font-bold">6</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Use Cases Section ── -->
+<section id="use-cases" class="full-section py-32" style="background: rgba(22, 32, 50, 0.5);">
+    <div class="inner">
+
+        <div class="text-center mb-20 reveal">
+            <span class="text-primary text-sm font-bold uppercase tracking-widest">Who Is It For?</span>
+            <h2 class="text-4xl md:text-5xl font-black mt-3 mb-4">
+                Built for <span class="gradient-text">Every Photographer</span>
+            </h2>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                Whether you're a beginner or a pro, PicPicky gives you the insights you need.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Use Case 1 -->
+            <div class="glass rounded-2xl p-8 flex gap-6 reveal">
+                <div class="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary text-3xl">school</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Photography Students</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Get objective feedback on your work. Understand exactly what makes a great photo with AI-powered technical analysis and learn faster.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Use Case 2 -->
+            <div class="glass rounded-2xl p-8 flex gap-6 reveal" style="transition-delay: 0.1s">
+                <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-accent text-3xl">work</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Professional Photographers</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Streamline your photo selection process. Quickly identify the best shots from a large batch and eliminate duplicates automatically.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Use Case 3 -->
+            <div class="glass rounded-2xl p-8 flex gap-6 reveal" style="transition-delay: 0.2s">
+                <div class="w-16 h-16 bg-accent-2/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-accent-2 text-3xl">groups</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Photography Contests</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Use PicPicky as a pre-screening tool. Ensure all submissions meet a minimum quality standard before human judging begins.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Use Case 4 -->
+            <div class="glass rounded-2xl p-8 flex gap-6 reveal" style="transition-delay: 0.3s">
+                <div class="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-green-400 text-3xl">trending_up</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Track Your Growth</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Monitor your improvement over time. Your photographer profile score reflects your progress and helps you identify areas to improve.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Tech Stack Section ── -->
+<section class="full-section py-32 relative">
+    <div class="absolute inset-0 grid-bg opacity-30"></div>
+    <div class="inner relative">
+
+        <div class="text-center mb-16 reveal">
+            <span class="text-primary text-sm font-bold uppercase tracking-widest">Technology</span>
+            <h2 class="text-4xl md:text-5xl font-black mt-3 mb-4">
+                Powered by <span class="gradient-text">Modern Stack</span>
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 reveal">
+
+            <div class="glass rounded-2xl p-6 text-center hover:border-primary/40 transition-all">
+                <div class="text-3xl mb-3">⚡</div>
+                <p class="font-bold text-white text-sm">FastAPI</p>
+                <p class="text-slate-500 text-xs mt-1">Backend</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 text-center hover:border-primary/40 transition-all">
+                <div class="text-3xl mb-3">🍃</div>
+                <p class="font-bold text-white text-sm">MongoDB</p>
+                <p class="text-slate-500 text-xs mt-1">Database</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 text-center hover:border-primary/40 transition-all">
+                <div class="text-3xl mb-3">☁️</div>
+                <p class="font-bold text-white text-sm">Cloudinary</p>
+                <p class="text-slate-500 text-xs mt-1">Storage</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 text-center hover:border-primary/40 transition-all">
+                <div class="text-3xl mb-3">🔥</div>
+                <p class="font-bold text-white text-sm">PyTorch</p>
+                <p class="text-slate-500 text-xs mt-1">ML Models</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 text-center hover:border-primary/40 transition-all">
+                <div class="text-3xl mb-3">🔐</div>
+                <p class="font-bold text-white text-sm">JWT Auth</p>
+                <p class="text-slate-500 text-xs mt-1">Security</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 text-center hover:border-primary/40 transition-all">
+                <div class="text-3xl mb-3">🎨</div>
+                <p class="font-bold text-white text-sm">CLIP-IQA</p>
+                <p class="text-slate-500 text-xs mt-1">AI Scoring</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA Section ── -->
+<section class="full-section py-32 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/5 to-accent-2/10"></div>
+    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+
+    <div class="inner text-center relative reveal">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium mb-8">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            Free to Use — No Credit Card Required
+        </div>
+
+        <h2 class="text-5xl md:text-6xl font-black mb-6">
+            Ready to <span class="gradient-text">Elevate</span><br>Your Photography?
+        </h2>
+
+        <p class="text-slate-400 text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+            Join PicPicky today and get instant AI-powered feedback on every photo you take. Your best work starts here.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="frontend/login.html" class="glow-btn px-10 py-5 rounded-xl font-black text-white text-xl flex items-center justify-center gap-3">
+                <span class="material-symbols-outlined text-2xl">rocket_launch</span>
+                Start For Free
+            </a>
+            <a href="frontend/register.html" class="px-10 py-5 rounded-xl font-black text-slate-300 text-xl border border-slate-700 hover:border-primary/50 hover:text-white transition-all flex items-center justify-center gap-3">
+                <span class="material-symbols-outlined text-2xl">person_add</span>
+                Create Account
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="full-section border-t border-slate-800 py-12">
+    <div class="inner">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <img src="PIC-logo.png" class="h-10 w-auto object-contain" alt="PicPicky Logo">
+            </div>
+
+            <!-- Links -->
+            <div class="flex items-center gap-8 text-slate-400 text-sm">
+                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                <a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a>
+                <a href="#pipeline" class="hover:text-white transition-colors">ML Pipeline</a>
+                <a href="frontend/login.html" class="hover:text-white transition-colors">Login</a>
+            </div>
+
+            <!-- Credits -->
+            <div class="text-slate-500 text-sm text-center">
+                <p>Built by <span class="text-primary font-semibold">Bushra Fathima and Mary Evangelin Paiva</span></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // ── Typewriter Effect ──
+    const words = ["sharpness", "exposure", "color balance", "aesthetics", "duplicates", "noise levels"];
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typeEl = document.getElementById('typewriter');
+
+    function typeWriter() {
+        const currentWord = words[wordIndex];
+        if (isDeleting) {
+            typeEl.textContent = currentWord.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            typeEl.textContent = currentWord.substring(0, charIndex + 1);
+            charIndex++;
+        }
+
+        if (!isDeleting && charIndex === currentWord.length) {
+            setTimeout(() => isDeleting = true, 1500);
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            wordIndex = (wordIndex + 1) % words.length;
+        }
+
+        setTimeout(typeWriter, isDeleting ? 80 : 120);
+    }
+    typeWriter();
+
+    // ── Scroll Reveal ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // ── Animate Score Bars ──
+    const scoreBars = document.querySelectorAll('.score-bar');
+    const barObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const targetWidth = bar.getAttribute('data-width');
+                setTimeout(() => {
+                    bar.style.transition = 'width 1.5s ease';
+                    bar.style.width = targetWidth;
+                }, 300);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    scoreBars.forEach(bar => barObserver.observe(bar));
+
+    // ── Smooth Scroll ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // ── Navbar Scroll Effect ──
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('nav');
+        if (window.scrollY > 50) {
+            navbar.style.borderBottomColor = 'rgba(32, 127, 223, 0.2)';
+        } else {
+            navbar.style.borderBottomColor = 'rgba(32, 127, 223, 0.1)';
+        }
+    });
+</script>
+
+</body>
+</html>

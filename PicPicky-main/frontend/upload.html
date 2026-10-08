@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PicPicky - Upload &amp; Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#207fdf",
+                    "slate-blue": {
+                        "950": "#0f1721",
+                        "900": "#161f2b",
+                        "800": "#1d2836",
+                        "700": "#2a3749",
+                    },
+                    "background-deep": "#161f2b",
+                },
+                fontFamily: { "display": ["Inter", "sans-serif"] },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+</script>
+<style type="text/tailwindcss">
+    @layer base {
+        body {
+            @apply bg-slate-blue-900 text-slate-100 antialiased font-display h-screen overflow-hidden;
+        }
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { @apply bg-slate-blue-950; }
+    ::-webkit-scrollbar-thumb { @apply bg-slate-blue-700 rounded-full; }
+</style>
+</head>
+
+<body class="bg-background-dark text-slate-100 font-display">
+<div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex flex-col border-r border-white/5 bg-slate-blue-950">
+        <div class="p-6 flex flex-col gap-8">
+            <div class="flex items-center gap-3">
+                <div>
+                    <a href="http://127.0.0.1:5500/frontend/home.html">
+                        <img 
+                        src="PIC-logo.png"
+                        class="h-42 scale-110 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                        alt="PicPicky Logo"
+                        />
+                    </a>
+                </div>
+            </div>
+
+            <nav class="flex flex-col gap-1.5">
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="dashboard.html">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+                <!-- ✅ Active page highlighted -->
+                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg transition-all" href="upload.html">
+                    <span class="material-symbols-outlined fill">cloud_upload</span>
+                    <span class="text-sm font-semibold">Uploads</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="analysis.html">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="text-sm font-medium">Analysis / Results</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="best-album.html">
+                    <span class="material-symbols-outlined">stars</span>
+                    <span class="text-sm font-medium">Best Album</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-all group" href="profile.html">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <span class="text-sm font-medium">Profile / Insights</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- ✅ Profile Dropdown -->
+        <div class="mt-auto p-6">
+            <div class="relative">
+
+                <button id="profileMenuToggle"
+                    class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all text-left">
+                    <div class="w-8 h-8 rounded-full bg-slate-blue-800 border border-white/10 flex items-center justify-center text-white font-bold text-sm" id="avatarInitial"></div>
+                    <div class="flex-1 min-w-0">
+                        <p id="profileName" class="text-xs font-bold text-white truncate"></p>
+                        <p id="profileEmail" class="text-[10px] text-slate-400 truncate"></p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500 text-sm">settings</span>
+                </button>
+
+                <!-- Dropdown -->
+                <div id="profileDropdown"
+                    class="hidden absolute bottom-full left-0 mb-2 w-full rounded-xl border border-white/10 bg-slate-900 shadow-xl overflow-hidden z-50">
+
+                    <a href="profile.html"
+                        class="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-base">person</span>
+                        Profile
+                    </a>
+
+                    <button id="logoutBtn"
+                        class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-all text-left">
+                        <span class="material-symbols-outlined text-base">logout</span>
+                        Logout
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <div class="max-w-[1600px] mx-auto w-full px-8 py-10">
+            <div>
+                <h2 class="text-3xl font-black tracking-tight text-white">Upload Photographs</h2>
+                <p class="text-slate-400 mt-2 font-medium">Professional high-resolution intake for quality profiling.</p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto p-10">
+            <div class="mb-14">
+                <div id="dropZone" class="relative group cursor-pointer border-2 border-dashed border-white/10 hover:border-primary/50 bg-slate-blue-800/30 rounded-3xl p-20 transition-all">
+                    <input id="fileInput" class="absolute inset-0 opacity-0 cursor-pointer z-10" multiple accept="image/*,.heic,.heif" type="file"/>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <div class="w-24 h-24 mb-8 rounded-full bg-primary/5 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-6xl">cloud_upload</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Drag and drop original files</h3>
+                        <p class="text-slate-400 mb-10 max-w-md text-base leading-relaxed">
+                            Upload RAW or high-res JPEGs for the most accurate visual quality analysis and color profiling. Max 10 images at a time.
+                        </p>
+                        <button class="px-10 py-3.5 bg-white text-slate-blue-950 text-sm font-black rounded-xl shadow-2xl transition-all pointer-events-none group-hover:bg-slate-200">
+                            SELECT FILES
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Queue Section -->
+            <div class="space-y-8" id="queueSection" style="display:none;">
+                <div class="flex items-center justify-between border-b border-white/5 pb-4">
+                    <h3 class="text-xl font-bold flex items-center gap-3 text-white">
+                        Processing Queue
+                        <span id="fileCount" class="px-3 py-1 bg-slate-blue-800 text-slate-300 text-xs font-bold rounded-full border border-white/5">0 Files</span>
+                    </h3>
+                    <div class="text-sm font-medium text-slate-500 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">data_usage</span>
+                        Total Size: <span id="totalSize" class="text-white font-bold">0 MB</span>
+                    </div>
+                </div>
+                <div id="imageGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+
+                <!-- Upload Button -->
+                <div class="flex justify-end pt-4">
+                    <button id="uploadBtn" class="px-10 py-3.5 bg-primary text-white text-sm font-black rounded-xl shadow-2xl hover:bg-primary/90 transition-all">
+                        UPLOAD ALL
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+let selectedFiles = [];
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    const token = localStorage.getItem("token");
+
+    if (!userName || !token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("profileName").textContent = userName;
+    document.getElementById("profileEmail").textContent = userEmail;
+    document.getElementById("avatarInitial").textContent = userName.charAt(0).toUpperCase();
+
+    // ✅ Profile dropdown logic
+    const profileMenuToggle = document.getElementById("profileMenuToggle");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    profileMenuToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!profileMenuToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.add("hidden");
+        }
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") profileDropdown.classList.add("hidden");
+    });
+
+    logoutBtn.addEventListener("click", function () {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "login.html";
+    });
+});
+
+// File input change
+document.getElementById("fileInput").addEventListener("change", function (e) {
+    handleFiles(Array.from(e.target.files));
+});
+
+// Drag and drop
+const dropZone = document.getElementById("dropZone");
+
+dropZone.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    dropZone.classList.add("border-primary/50");
+});
+
+dropZone.addEventListener("dragleave", function () {
+    dropZone.classList.remove("border-primary/50");
+});
+
+dropZone.addEventListener("drop", function (e) {
+    e.preventDefault();
+    dropZone.classList.remove("border-primary/50");
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
+    handleFiles(files);
+});
+
+function handleFiles(files) {
+    if (files.length === 0) return;
+    if (selectedFiles.length + files.length > 10) {
+        alert("Maximum 10 images allowed per upload!");
+        files = files.slice(0, 10 - selectedFiles.length);
+    }
+    selectedFiles = [...selectedFiles, ...files];
+    renderQueue();
+}
+
+function formatSize(bytes) {
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+function renderQueue() {
+    const queueSection = document.getElementById("queueSection");
+    const imageGrid = document.getElementById("imageGrid");
+    const fileCount = document.getElementById("fileCount");
+    const totalSize = document.getElementById("totalSize");
+
+    if (selectedFiles.length === 0) {
+        queueSection.style.display = "none";
+        return;
+    }
+
+    queueSection.style.display = "block";
+    fileCount.textContent = selectedFiles.length + " Files";
+
+    const total = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+    totalSize.textContent = formatSize(total);
+    imageGrid.innerHTML = "";
+
+    selectedFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const card = document.createElement("div");
+            card.id = `card-${index}`;
+            card.className = "bg-slate-blue-800/40 p-4 rounded-2xl border border-white/5 hover:border-white/10 shadow-sm relative group transition-all";
+            card.innerHTML = `
+                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-slate-blue-950 mb-4 relative">
+                    <img src="${e.target.result}" class="w-full h-full object-cover" alt="${file.name}"/>
+                </div>
+                <div class="flex justify-between items-start mb-3">
+                    <div class="truncate pr-2">
+                        <h4 class="text-sm font-bold text-white truncate">${file.name}</h4>
+                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-0.5">${formatSize(file.size)}</p>
+                    </div>
+                    <span id="status-${index}" class="text-[10px] font-black px-2 py-1 bg-slate-blue-700 text-slate-400 border border-white/5 rounded uppercase">Queued</span>
+                </div>
+                <div class="w-full bg-slate-blue-950 h-2 rounded-full overflow-hidden">
+                    <div id="progress-${index}" class="bg-slate-blue-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <button onclick="removeFile(${index})" class="absolute top-2 right-2 p-1.5 bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80">
+                    <span class="material-symbols-outlined text-xs">close</span>
+                </button>
+            `;
+            imageGrid.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    renderQueue();
+}
+
+document.getElementById("uploadBtn").addEventListener("click", async function () {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Session expired! Please login again.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const btn = document.getElementById("uploadBtn");
+    btn.disabled = true;
+    btn.textContent = "UPLOADING...";
+
+    let successCount = 0;
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+
+        document.getElementById(`status-${i}`).textContent = "Uploading";
+        document.getElementById(`status-${i}`).className = "text-[10px] font-black px-2 py-1 bg-primary/20 text-primary border border-primary/20 rounded uppercase";
+        document.getElementById(`progress-${i}`).style.width = "50%";
+        document.getElementById(`progress-${i}`).className = "bg-primary h-full rounded-full transition-all duration-300";
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await fetch(`${API}/upload`, {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                document.getElementById(`progress-${i}`).style.width = "100%";
+                document.getElementById(`progress-${i}`).className = "bg-green-500 h-full rounded-full transition-all duration-300";
+                document.getElementById(`status-${i}`).textContent = "Done";
+                document.getElementById(`status-${i}`).className = "text-[10px] font-black px-2 py-1 bg-green-500/20 text-green-400 border border-green-500/20 rounded uppercase";
+                successCount++;
+            } else {
+                document.getElementById(`progress-${i}`).style.width = "100%";
+                document.getElementById(`progress-${i}`).className = "bg-red-500 h-full rounded-full transition-all duration-300";
+                document.getElementById(`status-${i}`).textContent = "Failed";
+                document.getElementById(`status-${i}`).className = "text-[10px] font-black px-2 py-1 bg-red-500/20 text-red-400 border border-red-500/20 rounded uppercase";
+            }
+
+        } catch (err) {
+            document.getElementById(`status-${i}`).textContent = "Error";
+            document.getElementById(`status-${i}`).className = "text-[10px] font-black px-2 py-1 bg-red-500/20 text-red-400 border border-red-500/20 rounded uppercase";
+        }
+    }
+
+    btn.textContent = `✓ ${successCount}/${selectedFiles.length} Uploaded`;
+    btn.className = "px-10 py-3.5 bg-green-600 text-white text-sm font-black rounded-xl shadow-2xl transition-all cursor-default";
+});
+</script>
+</body>
+</html>
